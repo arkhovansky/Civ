@@ -1,0 +1,107 @@
+:root {
+    --color-main-foreground: #E7E7E7;
+    --color-main-background: #7489B2;
+
+
+    --color-secondary-foreground: var(--color-main-foreground);
+    --color-secondary-background: #465E8D;
+
+    --color-secondary-more1-foreground: var(--color-main-foreground);
+    --color-secondary-more1-background: #405681;
+
+    --color-secondary-more2-foreground: var(--color-main-foreground);
+    --color-secondary-more2-background: #394C72;
+    --color-secondary-more2-border: #556B99;
+
+    --color-secondary-less1-foreground: var(--color-main-foreground);
+    --color-secondary-less1-background: #4D689A;
+
+    --color-secondary-less2-foreground: var(--color-main-foreground);
+    --color-secondary-less2-background: #536FA6;
+
+    --color-secondary-less3-foreground: var(--color-main-foreground);
+    --color-secondary-less3-background: #5A78B3;
+
+
+    --color-accent-35: #595935;
+    --color-accent-50: #80804D;
+    --color-accent-60: #9A9A5D;
+    --color-accent-70: #B3B36C;
+    --color-accent-80: #CECE7C;
+    --color-accent-90: #E5E589;
+
+
+
+    /* Dialog */
+
+    --color-dialog-background: var(--color-main-background);
+
+    --color-dialogMarginal-background: var(--color-secondary-background);
+    --color-dialogHeader-background: var(--color-dialogMarginal-background);
+    --color-dialogFooter-background: var(--color-dialogMarginal-background);
+
+    --color-dialogHeader-foreground: var(--color-accent-90);
+
+
+
+    --color-divider: var(--color-secondary-background);
+
+
+    /* Button */
+
+    --color-button-foreground: var(--color-secondary-more2-foreground);
+    --color-button-background: var(--color-secondary-more2-background);
+    --color-button-border: var(--color-accent-50);
+
+
+    /* Input */
+
+    --color-input-background: var(--color-secondary-more2-background);
+    --color-input-border: var(--color-secondary-more2-border);
+
+
+    /* Table */
+
+    --color-table-header-foreground: var(--color-secondary-less2-foreground);
+    --color-table-header-background: var(--color-secondary-less2-background);
+    --color-table-header-border: var(--color-secondary-less1-background);
+    --color-table-header-background-highlight: var(--color-secondary-less3-background);
+}
+
+
+.unity-button {
+    color: var(--color-secondary-more2-foreground);
+    background-color: var(--color-secondary-more2-background);
+    border-color: var(--color-button-border);
+}
+
+.unity-button:hover {
+    background-color: var(--color-secondary-more1-background);
+    border-color: var(--color-accent-70);
+}
+
+
+.unity-base-text-field__input {
+    background-color: var(--color-input-background);
+    border-color: var(--color-input-border);
+}
+
+.changed > .unity-base-text-field__input {
+    background-color: var(--color-accent-35);
+}
+
+
+
+.unity-multi-column-view__header-container {
+    background-color: var(--color-table-header-background);
+    border-color: var(--color-table-header-border);
+}
+
+.unity-multi-column-header__column {
+    background-color: var(--color-table-header-background);
+    border-color: var(--color-table-header-border);
+}
+
+.unity-multi-column-header__column:hover {
+    background-color: var(--color-table-header-background-highlight);
+}

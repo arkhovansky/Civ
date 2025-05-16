@@ -1,0 +1,35 @@
+#mainMenuPanel {
+    width: 300px;
+    flex-grow: 1;
+    background-color: rgba(0, 0, 64, 0.75);
+    padding-left: 10px;
+    padding-right: 10px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.main-menu__button {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(204, 204, 122);
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.main-menu__button:hover {
+    color: rgb(229, 229, 137);
+}
+
+#exitButton {
+    position: absolute;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: 50px;
+}

@@ -1,0 +1,17 @@
+{
+    "name": "Server",
+    "rootNamespace": "Civ",
+    "references": [
+        "Common",
+        "Leopotam.EcsLite"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

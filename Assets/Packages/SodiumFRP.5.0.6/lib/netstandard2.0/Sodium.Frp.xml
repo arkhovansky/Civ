@@ -1,0 +1,2278 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sodium.Frp</name>
+    </assembly>
+    <members>
+        <member name="T:Sodium.Frp.Behavior">
+            <summary>
+                Helper methods for creating a <see cref="T:Sodium.Frp.Behavior`1" />.
+            </summary>
+        </member>
+        <member name="M:Sodium.Frp.Behavior.Constant``1(``0)">
+            <summary>
+                Creates a behavior with a constant value.
+            </summary>
+            <typeparam name="T">The type of the value of the behavior.</typeparam>
+            <param name="value">The value of the behavior.</param>
+            <returns>A behavior with a constant value.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Behavior.ConstantLazy``1(System.Lazy{``0})">
+            <summary>
+                Creates a behavior with a lazily computed constant value.
+            </summary>
+            <typeparam name="T">The type of the value of the behavior.</typeparam>
+            <param name="value">The lazily computed value of the behavior.</param>
+            <returns>A behavior with a lazily computed constant value.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Behavior.CreateSink``1(``0)">
+            <summary>
+                Creates a writable behavior that uses the last value if <see cref="M:Sodium.Frp.BehaviorSinkExtensionMethods.Send``1(Sodium.Frp.BehaviorSink{``0},``0)" /> is called more than once per
+                transaction.
+            </summary>
+            <param name="initialValue">The initial value of the behavior.</param>
+            <typeparam name="T">The type of values in the behavior sink.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Behavior.CreateSink``1(``0,System.Func{``0,``0,``0})">
+            <summary>
+                Creates a writable behavior that uses
+                <param name="coalesce" />
+                to combine values if <see cref="M:Sodium.Frp.BehaviorSinkExtensionMethods.Send``1(Sodium.Frp.BehaviorSink{``0},``0)" /> is called more than once per transaction.
+            </summary>
+            <param name="initialValue">The initial value of the behavior.</param>
+            <param name="coalesce">
+                Function to combine values when <see cref="M:Sodium.Frp.BehaviorSinkExtensionMethods.Send``1(Sodium.Frp.BehaviorSink{``0},``0)" /> is called more than once per
+                transaction.
+            </param>
+            <typeparam name="T">The type of values in the behavior sink.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Behavior.CreateLoop``1">
+            <summary>
+                Creates a <see cref="T:Sodium.Frp.BehaviorLoop`1" />.  This must be called and looped from within the same transaction.
+            </summary>
+            <typeparam name="T">The type of values in the behavior loop.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Behavior.Loop``1">
+            <summary>
+                Creates a helper to loop over a behavior for the specified type.
+            </summary>
+            <typeparam name="T">The type of the behavior to loop.</typeparam>
+            <returns>A <see cref="T:Sodium.Frp.BehaviorLooper`1"/> which should be used to complete the loop.</returns>
+        </member>
+        <member name="T:Sodium.Frp.BehaviorLooper`1">
+            <summary>
+                A helper to complete a loop over a behavior.
+            </summary>
+            <typeparam name="T">The type of the behavior being looped.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorLooper`1.WithCaptures``1(System.Func{Sodium.Frp.LoopedBehavior{`0},System.ValueTuple{Sodium.Frp.Behavior{`0},``0}})">
+            <summary>
+                Loop a behavior and return a value tuple containing the resulting behavior and captures.
+            </summary>
+            <typeparam name="TCaptures">The type of the captures to return.</typeparam>
+            <param name="f">A function which takes the behavior loop and returns a value tuple containing the resulting behavior and captures.</param>
+            <returns>A value tuple containing the resulting behavior and captures.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorLooper`1.WithoutCaptures(System.Func{Sodium.Frp.LoopedBehavior{`0},Sodium.Frp.Behavior{`0}})">
+            <summary>
+                Loop a behavior and return the resulting behavior.
+            </summary>
+            <param name="f">A function which takes the behavior loop and returns the resulting behavior.</param>
+            <returns>The resulting behavior.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Sample``1(Sodium.Frp.Behavior{``0})">
+            <summary>
+                Sample the current value of the behavior.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <param name="b">The behavior.</param>
+            <returns>The current value of the behavior.</returns>
+            <remarks>
+                <para>
+                    This method may be used inside the functions passed to primitives that apply them to streams,
+                    including <see cref="M:Sodium.Frp.StreamExtensionMethods.Map``2(Sodium.Frp.Stream{``0},System.Func{``0,``1})" /> in which case it is equivalent to
+                    snapshotting the behavior,
+                    <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``3(Sodium.Frp.Stream{``0},Sodium.Frp.Behavior{``1},System.Func{``0,``1,``2})" />,
+                    <see cref="M:Sodium.Frp.StreamExtensionMethods.Filter``1(Sodium.Frp.Stream{``0},System.Func{``0,System.Boolean})" />, and
+                    <see cref="M:Sodium.Frp.StreamExtensionMethods.Merge``1(Sodium.Frp.Stream{``0},Sodium.Frp.Stream{``0},System.Func{``0,``0,``0})" />
+                </para>
+                <para>
+                    It can be best to use this method inside an explicit transaction (using
+                    <see cref="M:Sodium.Frp.Transaction.Run``1(System.Func{``0})" /> or <see cref="M:Sodium.Frp.Transaction.RunVoid(System.Action)" />).
+                    For example, a b.Sample() inside an explicit transaction along with a b.Updates().Listen(...) will capture the
+                    current value and any updates without risk of missing any in between.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.SampleLazy``1(Sodium.Frp.Behavior{``0})">
+            <summary>
+                Sample the current value of the behavior lazily.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <param name="b">The behavior.</param>
+            <returns>A lazy which may be used to get the current value of the behavior.</returns>
+            <remarks>
+                This is a variant of <see cref="M:Sodium.Frp.BehaviorExtensionMethods.Sample``1(Sodium.Frp.Behavior{``0})" /> that works with the <see cref="T:Sodium.Frp.BehaviorLoop`1" /> class
+                when the behavior loop has not yet been looped.  It should be used in any code that is general
+                enough that it may be passed a <see cref="T:Sodium.Frp.BehaviorLoop`1" />.  See <see cref="M:Sodium.Frp.StreamExtensionMethods.HoldLazy``1(Sodium.Frp.Stream{``0},System.Lazy{``0})" />.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Map``2(Sodium.Frp.Behavior{``0},System.Func{``0,``1})">
+            <summary>
+                Transform the behavior values according to the supplied function, so the returned
+                behavior's values reflect the value of the function applied to the input behavior's values.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <typeparam name="TResult">The type of values fired by the returned behavior.</typeparam>
+            <param name="b">The behavior.</param>
+            <param name="f">
+                Function to apply to convert the values.  It must be a pure function.
+            </param>
+            <returns>An behavior which fires values transformed by <paramref name="f" /> for each value fired by this behavior.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``3(Sodium.Frp.Behavior{``0},Sodium.Frp.Behavior{``1},System.Func{``0,``1,``2})">
+            <summary>
+                Lift a binary function into behaviors, so the returned behavior always reflects the specified function applied to the input
+                behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <typeparam name="T2">The type of second behavior.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The behavior.</param>
+            <param name="b2">The second behavior.</param>
+            <param name="f">The binary function to lift into the behaviors.</param>
+            <returns>A behavior containing values resulting from the binary function applied to the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``4(Sodium.Frp.Behavior{``0},Sodium.Frp.Behavior{``1},Sodium.Frp.Behavior{``2},System.Func{``0,``1,``2,``3})">
+            <summary>
+                Lift a ternary function into behaviors, so the returned behavior always reflects the specified function applied to the
+                input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <typeparam name="T2">The type of second behavior.</typeparam>
+            <typeparam name="T3">The type of third behavior.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The behavior.</param>
+            <param name="b2">The second behavior.</param>
+            <param name="b3">The third behavior.</param>
+            <param name="f">The binary function to lift into the behaviors.</param>
+            <returns>A behavior containing values resulting from the ternary function applied to the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``5(Sodium.Frp.Behavior{``0},Sodium.Frp.Behavior{``1},Sodium.Frp.Behavior{``2},Sodium.Frp.Behavior{``3},System.Func{``0,``1,``2,``3,``4})">
+            <summary>
+                Lift a quaternary function into behaviors, so the returned behavior always reflects the specified function applied to the
+                input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <typeparam name="T2">The type of second behavior.</typeparam>
+            <typeparam name="T3">The type of third behavior.</typeparam>
+            <typeparam name="T4">The type of fourth behavior.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The behavior.</param>
+            <param name="b2">The second behavior.</param>
+            <param name="b3">The third behavior.</param>
+            <param name="b4">The fourth behavior.</param>
+            <param name="f">The binary function to lift into the behaviors.</param>
+            <returns>A behavior containing values resulting from the quaternary function applied to the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``6(Sodium.Frp.Behavior{``0},Sodium.Frp.Behavior{``1},Sodium.Frp.Behavior{``2},Sodium.Frp.Behavior{``3},Sodium.Frp.Behavior{``4},System.Func{``0,``1,``2,``3,``4,``5})">
+            <summary>
+                Lift a 5-argument function into behaviors, so the returned behavior always reflects the specified function applied to the
+                input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <typeparam name="T2">The type of second behavior.</typeparam>
+            <typeparam name="T3">The type of third behavior.</typeparam>
+            <typeparam name="T4">The type of fourth behavior.</typeparam>
+            <typeparam name="T5">The type of fifth behavior.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The behavior.</param>
+            <param name="b2">The second behavior.</param>
+            <param name="b3">The third behavior.</param>
+            <param name="b4">The fourth behavior.</param>
+            <param name="b5">The fifth behavior.</param>
+            <param name="f">The binary function to lift into the behaviors.</param>
+            <returns>A behavior containing values resulting from the 5-argument function applied to the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``7(Sodium.Frp.Behavior{``0},Sodium.Frp.Behavior{``1},Sodium.Frp.Behavior{``2},Sodium.Frp.Behavior{``3},Sodium.Frp.Behavior{``4},Sodium.Frp.Behavior{``5},System.Func{``0,``1,``2,``3,``4,``5,``6})">
+            <summary>
+                Lift a 6-argument function into behaviors, so the returned behavior always reflects the specified function applied to the
+                input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <typeparam name="T2">The type of second behavior.</typeparam>
+            <typeparam name="T3">The type of third behavior.</typeparam>
+            <typeparam name="T4">The type of fourth behavior.</typeparam>
+            <typeparam name="T5">The type of fifth behavior.</typeparam>
+            <typeparam name="T6">The type of sixth behavior.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The behavior.</param>
+            <param name="b2">The second behavior.</param>
+            <param name="b3">The third behavior.</param>
+            <param name="b4">The fourth behavior.</param>
+            <param name="b5">The fifth behavior.</param>
+            <param name="b6">The sixth behavior.</param>
+            <param name="f">The binary function to lift into the behaviors.</param>
+            <returns>A behavior containing values resulting from the 6-argument function applied to the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Apply``2(Sodium.Frp.Behavior{``0},Sodium.Frp.Behavior{System.Func{``0,``1}})">
+            <summary>
+                Apply a value inside a behavior to a function inside a behavior.  This is the primitive for all function lifting.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The behavior.</param>
+            <param name="bf">The behavior containing the function to apply the value to.</param>
+            <returns>
+                A behavior whose value is the result of applying the current function in behavior <paramref name="bf" /> to this
+                behavior's current value.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.SwitchB``1(Sodium.Frp.Behavior{Sodium.Frp.Behavior{``0}})">
+            <summary>
+                Unwrap a behavior inside another behavior to give a time-varying behavior implementation.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <param name="bba">The behavior containing another behavior.</param>
+            <returns>The unwrapped behavior.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.SwitchC``1(Sodium.Frp.Behavior{Sodium.Frp.Cell{``0}})">
+            <summary>
+                Unwrap a cell inside a behavior to give a time-varying cell implementation.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="bca">The behavior containing a cell.</param>
+            <returns>The unwrapped cell.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.SwitchS``1(Sodium.Frp.Behavior{Sodium.Frp.Stream{``0}})">
+            <summary>
+                Unwrap a stream inside a behavior to give a time-varying stream implementation.
+                When the behavior changes value, the output stream will fire the simultaneous firing (if one exists) from the stream
+                which the behavior held at the beginning of the transaction.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="bsa">The behavior containing the stream.</param>
+            <returns>The unwrapped stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``2(System.Collections.Generic.IEnumerable{Sodium.Frp.Behavior{``0}},System.Func{System.Collections.Generic.IReadOnlyList{``0},``1})">
+            <summary>
+                Lift a function into an enumerable of behaviors, so the returned behavior always reflects the specified function applied to
+                the
+                input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behaviors.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The enumerable of behaviors.</param>
+            <param name="f">The binary function to lift into the behaviors.</param>
+            <returns>A behavior containing values resulting from the function applied to the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``2(System.Collections.Generic.IReadOnlyCollection{Sodium.Frp.Behavior{``0}},System.Func{System.Collections.Generic.IReadOnlyList{``0},``1})">
+            <summary>
+                Lift a function into a collection of behaviors, so the returned behavior always reflects the specified function applied to
+                the
+                input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behaviors.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="b">The collection of behaviors.</param>
+            <param name="f">The binary function to lift into the behaviors.</param>
+            <returns>A behavior containing values resulting from the function applied to the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``1(System.Collections.Generic.IEnumerable{Sodium.Frp.Behavior{``0}})">
+            <summary>
+                Lift into an enumerable of behaviors, so the returned behavior always reflects a list of the input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behaviors.</typeparam>
+            <param name="b">The enumerable of behaviors.</param>
+            <returns>A behavior containing a list of the input behaviors' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorExtensionMethods.Lift``1(System.Collections.Generic.IReadOnlyCollection{Sodium.Frp.Behavior{``0}})">
+            <summary>
+                Lift into a collection of behaviors, so the returned behavior always reflects a list of the input behaviors' values.
+            </summary>
+            <typeparam name="T">The type of the behaviors.</typeparam>
+            <param name="b">The collection of behaviors.</param>
+            <returns>A behavior containing a list of the input behaviors' values.</returns>
+        </member>
+        <member name="T:Sodium.Frp.BehaviorLoop`1">
+            <summary>
+                A forward reference for a <see cref="T:Sodium.Frp.Behavior`1" /> equivalent to the <see cref="T:Sodium.Frp.Behavior`1" /> that is referenced.
+            </summary>
+            <typeparam name="T">The type of values in the behavior loop.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorLoop`1.Loop(Sodium.Frp.Behavior{`0})">
+            <summary>
+                Resolve the loop to specify what the <see cref="T:Sodium.Frp.BehaviorLoop`1" /> was a forward reference to.  This method
+                must be called inside the same transaction as the one in which this <see cref="T:Sodium.Frp.BehaviorLoop`1" /> instance was
+                created and used.
+                This requires an explicit transaction to be created with <see cref="M:Sodium.Frp.Transaction.Run``1(System.Func{``0})" /> or
+                <see cref="M:Sodium.Frp.Transaction.RunVoid(System.Action)" />.
+            </summary>
+            <param name="b">The behavior that was forward referenced.</param>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorSinkExtensionMethods.Send``1(Sodium.Frp.BehaviorSink{``0},``0)">
+            <summary>
+                Send a value, modifying the value of the behavior.  This method may not be called from inside handlers registered with
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Listen``1(Sodium.Frp.Stream{``0},System.Action{``0})" /> or <see cref="M:Sodium.Frp.CellExtensionMethods.Listen``1(Sodium.Frp.Cell{``0},System.Action{``0})" />.
+                An exception will be thrown, because sinks are for interfacing I/O to FRP only.  They are not meant to be used to
+                define new primitives.
+            </summary>
+            <typeparam name="T">The type of the behavior sink.</typeparam>
+            <param name="b">The behavior sink.</param>
+            <param name="a">The value to send.</param>
+        </member>
+        <member name="M:Sodium.Frp.BehaviorSinkExtensionMethods.AsBehavior``1(Sodium.Frp.BehaviorSink{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.BehaviorSink`1" /> as a <see cref="T:Sodium.Frp.Behavior`1" />.
+            </summary>
+            <typeparam name="T">The type of the behavior sink.</typeparam>
+            <param name="b">The behavior sink.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.BehaviorSink`1" /> as a <see cref="T:Sodium.Frp.Behavior`1" />.</returns>
+        </member>
+        <member name="T:Sodium.Frp.Cell">
+            <summary>
+                Helper methods for creating a <see cref="T:Sodium.Frp.Cell`1" />.
+            </summary>
+        </member>
+        <member name="M:Sodium.Frp.Cell.Constant``1(``0)">
+            <summary>
+                Creates a cell with a constant value.
+            </summary>
+            <typeparam name="T">The type of the value of the cell.</typeparam>
+            <param name="value">The value of the cell.</param>
+            <returns>A cell with a constant value.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Cell.ConstantLazy``1(System.Lazy{``0})">
+            <summary>
+                Creates a cell with a lazy constant value.
+            </summary>
+            <typeparam name="T">The type of the value of the cell.</typeparam>
+            <param name="value">The lazy value of the cell.</param>
+            <returns>A cell with a lazy constant value.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Cell.CreateSink``1(``0)">
+            <summary>
+                Construct a writable cell that uses the last value if <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" /> is called
+                more than once per transaction.
+            </summary>
+            <typeparam name="T">The type of the value in the cell sink.</typeparam>
+            <param name="initialValue">The initial value of the cell.</param>
+        </member>
+        <member name="M:Sodium.Frp.Cell.CreateSink``1(``0,System.Func{``0,``0,``0})">
+            <summary>
+                Construct a writable cell that uses
+                <param name="coalesce" />
+                to combine values if <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" /> is called more than once per transaction.
+            </summary>
+            <typeparam name="T">The type of the value in the cell sink.</typeparam>
+            <param name="initialValue">The initial value of the cell.</param>
+            <param name="coalesce">
+                Function to combine values when <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" /> is called more
+                than once per transaction.
+            </param>
+        </member>
+        <member name="M:Sodium.Frp.Cell.CreateStreamSink``1">
+            <summary>
+                Construct a writable cell stream sink that uses the last value if <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" />
+                is called more than once per transaction.
+                This stream sink is meant to be turned into a <see cref="T:Sodium.Frp.Cell`1" /> through the use of
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Hold``1(Sodium.Frp.Stream{``0},``0)" />.
+            </summary>
+            <typeparam name="T">The type of the value in the cell stream sink.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Cell.CreateStreamSink``1(System.Func{``0,``0,``0})">
+            <summary>
+                Construct a writable cell stream sink that uses
+                <param name="coalesce" />
+                to combine values if <see cref="M:Sodium.Frp.StreamSinkExtensionMethods.Send``1(Sodium.Frp.StreamSink{``0},``0)" /> is called more than once per transaction.
+                This stream sink is meant to be turned into a <see cref="T:Sodium.Frp.Cell`1" /> through the use of
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Hold``1(Sodium.Frp.Stream{``0},``0)" />.
+            </summary>
+            <typeparam name="T">The type of the value in the cell stream sink.</typeparam>
+            <param name="coalesce">
+                Function to combine values when <see cref="M:Sodium.Frp.StreamSinkExtensionMethods.Send``1(Sodium.Frp.StreamSink{``0},``0)" /> is called more
+                than once per transaction.
+            </param>
+        </member>
+        <member name="M:Sodium.Frp.Cell.CreateLoop``1">
+            <summary>
+                Creates a cell loop.
+            </summary>
+            <typeparam name="T">The type of values in the cell loop.</typeparam>
+            <returns>The cell loop.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Cell.Loop``1">
+            <summary>
+                Creates a helper to loop over a cell for the specified type.
+            </summary>
+            <typeparam name="T">The type of the cell to loop.</typeparam>
+            <returns>A <see cref="T:Sodium.Frp.CellLooper`1"/> which should be used to complete the loop.</returns>
+        </member>
+        <member name="T:Sodium.Frp.CellLooper`1">
+            <summary>
+                A helper to complete a loop over a cell.
+            </summary>
+            <typeparam name="T">The type of the cell being looped.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.CellLooper`1.WithCaptures``1(System.Func{Sodium.Frp.LoopedCell{`0},System.ValueTuple{Sodium.Frp.Cell{`0},``0}})">
+            <summary>
+                Loop a cell and return a value tuple containing the resulting cell and captures.
+            </summary>
+            <typeparam name="TCaptures">The type of the captures to return.</typeparam>
+            <param name="f">A function which takes the cell loop and returns a value tuple containing the resulting cell and captures.</param>
+            <returns>A value tuple containing the resulting cell and captures.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellLooper`1.WithoutCaptures(System.Func{Sodium.Frp.LoopedCell{`0},Sodium.Frp.Cell{`0}})">
+            <summary>
+                Loop a cell and return the resulting cell.
+            </summary>
+            <param name="f">A function which takes the cell loop and returns the resulting cell.</param>
+            <returns>The resulting cell.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})">
+            <summary>
+                Sample the current value of the cell.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <returns>The current value of the cell.</returns>
+            <remarks>
+                <para>
+                    This method may be used inside the functions passed to primitives that apply them to streams,
+                    including <see cref="M:Sodium.Frp.StreamExtensionMethods.Map``2(Sodium.Frp.Stream{``0},System.Func{``0,``1})" /> in which case it is equivalent to
+                    snapshotting the cell,
+                    <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``3(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1},System.Func{``0,``1,``2})" />,
+                    <see cref="M:Sodium.Frp.StreamExtensionMethods.Filter``1(Sodium.Frp.Stream{``0},System.Func{``0,System.Boolean})" />, and
+                    <see cref="M:Sodium.Frp.StreamExtensionMethods.Merge``1(Sodium.Frp.Stream{``0},Sodium.Frp.Stream{``0},System.Func{``0,``0,``0})" />
+                </para>
+                <para>
+                    It should generally be avoided in favor of <see cref="M:Sodium.Frp.CellExtensionMethods.Listen``1(Sodium.Frp.Cell{``0},System.Action{``0})" />
+                    so updates aren't missed, but in many circumstances it makes sense.
+                </para>
+                <para>
+                    It can be best to use this method inside an explicit transaction (using
+                    <see cref="M:Sodium.Frp.Transaction.Run``1(System.Func{``0})" /> or <see cref="M:Sodium.Frp.Transaction.RunVoid(System.Action)" />).
+                    For example, a c.Sample() inside an explicit transaction along with a c.Updates().Listen(...) will capture the
+                    current value and any updates without risk of missing any in between.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.SampleLazy``1(Sodium.Frp.Cell{``0})">
+            <summary>
+                Sample the current value of the cell lazily.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <returns>A lazy which may be used to get the current value of the cell.</returns>
+            <remarks>
+                This is a variant of <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" /> that works with the <see cref="T:Sodium.Frp.CellLoop`1" /> class
+                when the cell loop has not yet been looped.  It should be used in any code that is general
+                enough that it may be passed a <see cref="T:Sodium.Frp.CellLoop`1" />.  See <see cref="M:Sodium.Frp.StreamExtensionMethods.HoldLazy``1(Sodium.Frp.Stream{``0},System.Lazy{``0})" />.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Updates``1(Sodium.Frp.Cell{``0})">
+            <summary>
+                Gets the stream of discrete updates to this cell.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <returns>
+                The stream of discrete updates to this cell.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Values``1(Sodium.Frp.Cell{``0})">
+            <summary>
+                Gets the stream of values of this cell.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <returns>
+                The stream of values of this cell.
+            </returns>
+            <remarks>
+                This stream is identical to the stream returned by <see cref="M:Sodium.Frp.CellExtensionMethods.Updates``1(Sodium.Frp.Cell{``0})" /> except that it also fires
+                during the transaction in which it was obtained.
+                To observe the first value, this property must be accessed and used within the same explicit transaction.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.AsBehavior``1(Sodium.Frp.Cell{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.Cell`1" /> as a <see cref="T:Sodium.Frp.Behavior`1" />.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.Cell`1" /> as a <see cref="T:Sodium.Frp.Behavior`1" />.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Listen``1(Sodium.Frp.Cell{``0},System.Action{``0})">
+            <summary>
+                Listen for updates to the value of this cell.  The returned <see cref="T:Sodium.Frp.IListener" /> may be
+                disposed to stop listening.  This is an OPERATIONAL mechanism for interfacing between
+                the world of I/O and FRP.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="handler">The handler to execute for each value.</param>
+            <returns>An <see cref="T:Sodium.Frp.IListener" /> which may be disposed to stop listening.</returns>
+            <remarks>
+                <para>
+                    No assumptions should be made about what thread the handler is called on and it should not block.
+                    Neither <see cref="!:StreamSink&lt;T&gt;.Send" /> nor <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" /> may be called from the
+                    handler.
+                    They will throw an exception because this method is not meant to be used to create new primitives.
+                </para>
+                <para>
+                    If the <see cref="T:Sodium.Frp.IListener" /> is not disposed, it will continue to listen until this cell is either
+                    disposed or garbage collected.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.ListenWeak``1(Sodium.Frp.Cell{``0},System.Action{``0})">
+            <summary>
+                Listen for updates to the value of this cell.  The returned <see cref="T:Sodium.Frp.IListener" /> may be
+                disposed to stop listening, or it will automatically stop listening when it is garbage collected.
+                This is an OPERATIONAL mechanism for interfacing between the world of I/O and FRP.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="handler">The handler to execute for each value.</param>
+            <returns>An <see cref="T:Sodium.Frp.IListener" /> which may be disposed to stop listening.</returns>
+            <remarks>
+                <para>
+                    No assumptions should be made about what thread the handler is called on and it should not block.
+                    Neither <see cref="!:StreamSink&lt;T&gt;.Send" /> nor <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" /> may be called from the
+                    handler.
+                    They will throw an exception because this method is not meant to be used to create new primitives.
+                </para>
+                <para>
+                    If the <see cref="T:Sodium.Frp.IListener" /> is not disposed, it will continue to listen until this cell is either
+                    disposed or garbage collected or the listener itself is garbage collected.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Map``2(Sodium.Frp.Cell{``0},System.Func{``0,``1})">
+            <summary>
+                Transform the cell values according to the supplied function, so the returned
+                cell's values reflect the value of the function applied to the input cell's values.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <typeparam name="TResult">The type of values fired by the returned cell.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="f">
+                Function to apply to convert the values.  It must be a pure function.
+            </param>
+            <returns>A cell which fires values transformed by <paramref name="f" /> for each value fired by this cell.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``3(Sodium.Frp.Cell{``0},Sodium.Frp.Cell{``1},System.Func{``0,``1,``2})">
+            <summary>
+                Lift a binary function into cells, so the returned cell always reflects the specified function applied to the input
+                cells' values.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <typeparam name="T2">The type of second cell.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="c2">The second cell.</param>
+            <param name="f">The binary function to lift into the cells.</param>
+            <returns>A cell containing values resulting from the binary function applied to the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``4(Sodium.Frp.Cell{``0},Sodium.Frp.Cell{``1},Sodium.Frp.Cell{``2},System.Func{``0,``1,``2,``3})">
+            <summary>
+                Lift a ternary function into cells, so the returned cell always reflects the specified function applied to the
+                input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <typeparam name="T2">The type of second cell.</typeparam>
+            <typeparam name="T3">The type of third cell.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="c2">The second cell.</param>
+            <param name="c3">The third cell.</param>
+            <param name="f">The binary function to lift into the cells.</param>
+            <returns>A cell containing values resulting from the ternary function applied to the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``5(Sodium.Frp.Cell{``0},Sodium.Frp.Cell{``1},Sodium.Frp.Cell{``2},Sodium.Frp.Cell{``3},System.Func{``0,``1,``2,``3,``4})">
+            <summary>
+                Lift a quaternary function into cells, so the returned cell always reflects the specified function applied to the
+                input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <typeparam name="T2">The type of second cell.</typeparam>
+            <typeparam name="T3">The type of third cell.</typeparam>
+            <typeparam name="T4">The type of fourth cell.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="c2">The second cell.</param>
+            <param name="c3">The third cell.</param>
+            <param name="c4">The fourth cell.</param>
+            <param name="f">The binary function to lift into the cells.</param>
+            <returns>A cell containing values resulting from the quaternary function applied to the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``6(Sodium.Frp.Cell{``0},Sodium.Frp.Cell{``1},Sodium.Frp.Cell{``2},Sodium.Frp.Cell{``3},Sodium.Frp.Cell{``4},System.Func{``0,``1,``2,``3,``4,``5})">
+            <summary>
+                Lift a 5-argument function into cells, so the returned cell always reflects the specified function applied to the
+                input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <typeparam name="T2">The type of second cell.</typeparam>
+            <typeparam name="T3">The type of third cell.</typeparam>
+            <typeparam name="T4">The type of fourth cell.</typeparam>
+            <typeparam name="T5">The type of fifth cell.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="c2">The second cell.</param>
+            <param name="c3">The third cell.</param>
+            <param name="c4">The fourth cell.</param>
+            <param name="c5">The fifth cell.</param>
+            <param name="f">The binary function to lift into the cells.</param>
+            <returns>A cell containing values resulting from the 5-argument function applied to the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``7(Sodium.Frp.Cell{``0},Sodium.Frp.Cell{``1},Sodium.Frp.Cell{``2},Sodium.Frp.Cell{``3},Sodium.Frp.Cell{``4},Sodium.Frp.Cell{``5},System.Func{``0,``1,``2,``3,``4,``5,``6})">
+            <summary>
+                Lift a 6-argument function into cells, so the returned cell always reflects the specified function applied to the
+                input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <typeparam name="T2">The type of second cell.</typeparam>
+            <typeparam name="T3">The type of third cell.</typeparam>
+            <typeparam name="T4">The type of fourth cell.</typeparam>
+            <typeparam name="T5">The type of fifth cell.</typeparam>
+            <typeparam name="T6">The type of sixth cell.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="c2">The second cell.</param>
+            <param name="c3">The third cell.</param>
+            <param name="c4">The fourth cell.</param>
+            <param name="c5">The fifth cell.</param>
+            <param name="c6">The sixth cell.</param>
+            <param name="f">The binary function to lift into the cells.</param>
+            <returns>A cell containing values resulting from the 6-argument function applied to the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Apply``2(Sodium.Frp.Cell{``0},Sodium.Frp.Cell{System.Func{``0,``1}})">
+            <summary>
+                Apply a value inside a cell to a function inside a cell.  This is the primitive for all function lifting.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="cf">The cell containing the function to apply the value to.</param>
+            <returns>
+                A cell whose value is the result of applying the current function in cell <paramref name="cf" /> to this
+                cell's current value.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Calm``1(Sodium.Frp.Cell{``0})">
+            <summary>
+                Return a cell whose stream only receives events which have a different value than the previous event.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <returns>A cell whose stream only receives events which have a different value than the previous event.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Calm``1(Sodium.Frp.Cell{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+                Return a cell whose stream only receives events which have a different value than the previous event.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="comparer">The equality comparer to use to determine if two items are equal.</param>
+            <returns>A cell whose stream only receives events which have a different value than the previous event.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Calm``1(Sodium.Frp.Cell{``0},System.Func{``0,``0,System.Boolean})">
+            <summary>
+                Return a cell whose stream only receives events which have a different value than the previous event.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="c">The cell.</param>
+            <param name="areEqual">The function to use to determine if two items are equal.</param>
+            <returns>A cell whose stream only receives events which have a different value than the previous event.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.SwitchB``1(Sodium.Frp.Cell{Sodium.Frp.Behavior{``0}})">
+            <summary>
+                Unwrap a behavior inside a cell to give a time-varying behavior implementation.
+            </summary>
+            <typeparam name="T">The type of the behavior.</typeparam>
+            <param name="cba">The cell containing a behavior.</param>
+            <returns>The unwrapped behavior.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.SwitchC``1(Sodium.Frp.Cell{Sodium.Frp.Cell{``0}})">
+            <summary>
+                Unwrap a cell inside another cell to give a time-varying cell implementation.
+            </summary>
+            <typeparam name="T">The type of the cell.</typeparam>
+            <param name="cca">The cell containing another cell.</param>
+            <returns>The unwrapped cell.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.SwitchS``1(Sodium.Frp.Cell{Sodium.Frp.Stream{``0}})">
+            <summary>
+                Unwrap a stream inside a cell to give a time-varying stream implementation.
+                When the cell changes value, the output stream will fire the simultaneous firing (if one exists) from the
+                stream which the cell held at the beginning of the transaction.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="csa">The cell containing the stream.</param>
+            <returns>The unwrapped stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``2(System.Collections.Generic.IEnumerable{Sodium.Frp.Cell{``0}},System.Func{System.Collections.Generic.IReadOnlyList{``0},``1})">
+            <summary>
+                Lift a function into an enumerable of cells, so the returned cell always reflects the specified function applied to
+                the
+                input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cells.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The enumerable of cells.</param>
+            <param name="f">The binary function to lift into the cells.</param>
+            <returns>A cell containing values resulting from the function applied to the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``2(System.Collections.Generic.IReadOnlyCollection{Sodium.Frp.Cell{``0}},System.Func{System.Collections.Generic.IReadOnlyList{``0},``1})">
+            <summary>
+                Lift a function into a collection of cells, so the returned cell always reflects the specified function applied to
+                the
+                input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cells.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="c">The collection of cells.</param>
+            <param name="f">The binary function to lift into the cells.</param>
+            <returns>A cell containing values resulting from the function applied to the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``1(System.Collections.Generic.IEnumerable{Sodium.Frp.Cell{``0}})">
+            <summary>
+                Lift into an enumerable of cells, so the returned cell always reflects a list of the input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cells.</typeparam>
+            <param name="c">The enumerable of cells.</param>
+            <returns>A cell containing a list of the input cells' values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellExtensionMethods.Lift``1(System.Collections.Generic.IReadOnlyCollection{Sodium.Frp.Cell{``0}})">
+            <summary>
+                Lift into a collection of cells, so the returned cell always reflects a list of the input cells' values.
+            </summary>
+            <typeparam name="T">The type of the cells.</typeparam>
+            <param name="c">The collection of cells.</param>
+            <returns>A cell containing a list of the input cells' values.</returns>
+        </member>
+        <member name="T:Sodium.Frp.CellLoop`1">
+            <summary>
+                A forward reference for a <see cref="T:Sodium.Frp.Cell`1" /> equivalent to the <see cref="T:Sodium.Frp.Cell`1" /> that is
+                referenced.
+            </summary>
+            <typeparam name="T">The type of values in the cell loop.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.CellLoop`1.Loop(Sodium.Frp.Cell{`0})">
+            <summary>
+                Resolve the loop to specify what the <see cref="T:Sodium.Frp.CellLoop`1" /> was a forward reference to.  This method
+                must be called inside the same transaction as the one in which this <see cref="T:Sodium.Frp.CellLoop`1" /> instance was
+                created and used.
+                This requires an explicit transaction to be created with <see cref="M:Sodium.Frp.Transaction.Run``1(System.Func{``0})" /> or
+                <see cref="M:Sodium.Frp.Transaction.RunVoid(System.Action)" />.
+            </summary>
+            <param name="c">The cell that was forward referenced.</param>
+        </member>
+        <member name="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)">
+            <summary>
+                Send a value, modifying the value of the cell.  This method may not be called from inside handlers registered with
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Listen``1(Sodium.Frp.Stream{``0},System.Action{``0})" /> or <see cref="M:Sodium.Frp.CellExtensionMethods.Listen``1(Sodium.Frp.Cell{``0},System.Action{``0})" />.
+                An exception will be thrown, because sinks are for interfacing I/O to FRP only.  They are not meant to be used to
+                define new primitives.
+            </summary>
+            <typeparam name="T">The type of the cell sink.</typeparam>
+            <param name="c">The cell sink.</param>
+            <param name="a">The value to send.</param>
+        </member>
+        <member name="M:Sodium.Frp.CellSinkExtensionMethods.AsCell``1(Sodium.Frp.CellSink{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.CellSink`1" /> as a <see cref="T:Sodium.Frp.Cell`1" />.
+            </summary>
+            <typeparam name="T">The type of the cell sink.</typeparam>
+            <param name="c">The cell sink.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.CellSink`1" /> as a <see cref="T:Sodium.Frp.Cell`1" />.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CellStreamSinkExtensionMethods.AsStreamSink``1(Sodium.Frp.CellStreamSink{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.CellStreamSink`1" /> as a <see cref="T:Sodium.Frp.StreamSink`1" />.
+            </summary>
+            <typeparam name="T">The type of the cell stream sink.</typeparam>
+            <param name="c">The cell stream sink.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.CellStreamSink`1" /> as a <see cref="T:Sodium.Frp.StreamSink`1" />.</returns>
+        </member>
+        <member name="M:Sodium.Frp.CleanupExtensionMethods.CleanupNow(Sodium.Frp.Cleanup)">
+            <summary>
+                Force the cleanup to happen now rather than waiting for this object to be garbage collected.
+            </summary>
+            <param name="c">The cleanup object.</param>
+        </member>
+        <member name="T:Sodium.Frp.CanBeNullAttribute">
+            <summary>
+            Indicates that the value of the marked element could be <c>null</c> sometimes,
+            so the check for <c>null</c> is necessary before its usage.
+            </summary>
+            <example><code>
+            [CanBeNull] object Test() => null;
+            
+            void UseTest() {
+              var p = Test();
+              var s = p.ToString(); // Warning: Possible 'System.NullReferenceException'
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.NotNullAttribute">
+            <summary>
+            Indicates that the value of the marked element could never be <c>null</c>.
+            </summary>
+            <example><code>
+            [NotNull] object Foo() {
+              return null; // Warning: Possible 'null' assignment
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.ItemNotNullAttribute">
+            <summary>
+            Can be appplied to symbols of types derived from IEnumerable as well as to symbols of Task
+            and Lazy classes to indicate that the value of a collection item, of the Task.Result property
+            or of the Lazy.Value property can never be null.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.ItemCanBeNullAttribute">
+            <summary>
+            Can be appplied to symbols of types derived from IEnumerable as well as to symbols of Task
+            and Lazy classes to indicate that the value of a collection item, of the Task.Result property
+            or of the Lazy.Value property can be null.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.StringFormatMethodAttribute">
+            <summary>
+            Indicates that the marked method builds string by format pattern and (optional) arguments.
+            Parameter, which contains format string, should be given in constructor. The format string
+            should be in <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])"/>-like form.
+            </summary>
+            <example><code>
+            [StringFormatMethod("message")]
+            void ShowError(string message, params object[] args) { /* do something */ }
+            
+            void Foo() {
+              ShowError("Failed: {0}"); // Warning: Non-existing argument in format string
+            }
+            </code></example>
+        </member>
+        <member name="M:Sodium.Frp.StringFormatMethodAttribute.#ctor(System.String)">
+            <param name="formatParameterName">
+            Specifies which parameter of an annotated method should be treated as format-string
+            </param>
+        </member>
+        <member name="T:Sodium.Frp.ValueProviderAttribute">
+            <summary>
+            For a parameter that is expected to be one of the limited set of values.
+            Specify fields of which type should be used as values for this parameter.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.InvokerParameterNameAttribute">
+            <summary>
+            Indicates that the function argument should be string literal and match one
+            of the parameters of the caller function. For example, ReSharper annotates
+            the parameter of <see cref="T:System.ArgumentNullException"/>.
+            </summary>
+            <example><code>
+            void Foo(string param) {
+              if (param == null)
+                throw new ArgumentNullException("par"); // Warning: Cannot resolve symbol
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.NotifyPropertyChangedInvocatorAttribute">
+             <summary>
+             Indicates that the method is contained in a type that implements
+             <c>System.ComponentModel.INotifyPropertyChanged</c> interface and this method
+             is used to notify that some property value changed.
+             </summary>
+             <remarks>
+             The method should be non-static and conform to one of the supported signatures:
+             <list>
+             <item><c>NotifyChanged(string)</c></item>
+             <item><c>NotifyChanged(params string[])</c></item>
+             <item><c>NotifyChanged{T}(Expression{Func{T}})</c></item>
+             <item><c>NotifyChanged{T,U}(Expression{Func{T,U}})</c></item>
+             <item><c>SetProperty{T}(ref T, T, string)</c></item>
+             </list>
+             </remarks>
+             <example><code>
+             public class Foo : INotifyPropertyChanged {
+               public event PropertyChangedEventHandler PropertyChanged;
+             
+               [NotifyPropertyChangedInvocator]
+               protected virtual void NotifyChanged(string propertyName) { ... }
+            
+               string _name;
+             
+               public string Name {
+                 get { return _name; }
+                 set { _name = value; NotifyChanged("LastName"); /* Warning */ }
+               }
+             }
+             </code>
+             Examples of generated notifications:
+             <list>
+             <item><c>NotifyChanged("Property")</c></item>
+             <item><c>NotifyChanged(() =&gt; Property)</c></item>
+             <item><c>NotifyChanged((VM x) =&gt; x.Property)</c></item>
+             <item><c>SetProperty(ref myField, value, "Property")</c></item>
+             </list>
+             </example>
+        </member>
+        <member name="T:Sodium.Frp.ContractAnnotationAttribute">
+            <summary>
+            Describes dependency between method input and output.
+            </summary>
+            <syntax>
+            <p>Function Definition Table syntax:</p>
+            <list>
+            <item>FDT      ::= FDTRow [;FDTRow]*</item>
+            <item>FDTRow   ::= Input =&gt; Output | Output &lt;= Input</item>
+            <item>Input    ::= ParameterName: Value [, Input]*</item>
+            <item>Output   ::= [ParameterName: Value]* {halt|stop|void|nothing|Value}</item>
+            <item>Value    ::= true | false | null | notnull | canbenull</item>
+            </list>
+            If method has single input parameter, it's name could be omitted.<br/>
+            Using <c>halt</c> (or <c>void</c>/<c>nothing</c>, which is the same) for method output
+            means that the methos doesn't return normally (throws or terminates the process).<br/>
+            Value <c>canbenull</c> is only applicable for output parameters.<br/>
+            You can use multiple <c>[ContractAnnotation]</c> for each FDT row, or use single attribute
+            with rows separated by semicolon. There is no notion of order rows, all rows are checked
+            for applicability and applied per each program state tracked by R# analysis.<br/>
+            </syntax>
+            <examples><list>
+            <item><code>
+            [ContractAnnotation("=&gt; halt")]
+            public void TerminationMethod()
+            </code></item>
+            <item><code>
+            [ContractAnnotation("halt &lt;= condition: false")]
+            public void Assert(bool condition, string text) // regular assertion method
+            </code></item>
+            <item><code>
+            [ContractAnnotation("s:null =&gt; true")]
+            public bool IsNullOrEmpty(string s) // string.IsNullOrEmpty()
+            </code></item>
+            <item><code>
+            // A method that returns null if the parameter is null,
+            // and not null if the parameter is not null
+            [ContractAnnotation("null =&gt; null; notnull =&gt; notnull")]
+            public object Transform(object data) 
+            </code></item>
+            <item><code>
+            [ContractAnnotation("=&gt; true, result: notnull; =&gt; false, result: null")]
+            public bool TryParse(string s, out Person result)
+            </code></item>
+            </list></examples>
+        </member>
+        <member name="T:Sodium.Frp.LocalizationRequiredAttribute">
+            <summary>
+            Indicates that marked element should be localized or not.
+            </summary>
+            <example><code>
+            [LocalizationRequiredAttribute(true)]
+            class Foo {
+              string str = "my string"; // Warning: Localizable string
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.CannotApplyEqualityOperatorAttribute">
+            <summary>
+            Indicates that the value of the marked type (or its derivatives)
+            cannot be compared using '==' or '!=' operators and <c>Equals()</c>
+            should be used instead. However, using '==' or '!=' for comparison
+            with <c>null</c> is always permitted.
+            </summary>
+            <example><code>
+            [CannotApplyEqualityOperator]
+            class NoEquality { }
+            
+            class UsesNoEquality {
+              void Test() {
+                var ca1 = new NoEquality();
+                var ca2 = new NoEquality();
+                if (ca1 != null) { // OK
+                  bool condition = ca1 == ca2; // Warning
+                }
+              }
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.BaseTypeRequiredAttribute">
+            <summary>
+            When applied to a target attribute, specifies a requirement for any type marked
+            with the target attribute to implement or inherit specific type or types.
+            </summary>
+            <example><code>
+            [BaseTypeRequired(typeof(IComponent)] // Specify requirement
+            class ComponentAttribute : Attribute { }
+            
+            [Component] // ComponentAttribute requires implementing IComponent interface
+            class MyComponent : IComponent { }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.UsedImplicitlyAttribute">
+            <summary>
+            Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),
+            so this symbol will not be marked as unused (as well as by other usage inspections).
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.MeansImplicitUseAttribute">
+            <summary>
+            Should be used on attributes and causes ReSharper to not mark symbols marked with such attributes
+            as unused (as well as by other usage inspections)
+            </summary>
+        </member>
+        <member name="F:Sodium.Frp.ImplicitUseKindFlags.Access">
+            <summary>Only entity marked with attribute considered used.</summary>
+        </member>
+        <member name="F:Sodium.Frp.ImplicitUseKindFlags.Assign">
+            <summary>Indicates implicit assignment to a member.</summary>
+        </member>
+        <member name="F:Sodium.Frp.ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature">
+            <summary>
+            Indicates implicit instantiation of a type with fixed constructor signature.
+            That means any unused constructor parameters won't be reported as such.
+            </summary>
+        </member>
+        <member name="F:Sodium.Frp.ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature">
+            <summary>Indicates implicit instantiation of a type.</summary>
+        </member>
+        <member name="T:Sodium.Frp.ImplicitUseTargetFlags">
+            <summary>
+            Specify what is considered used implicitly when marked
+            with <see cref="T:Sodium.Frp.MeansImplicitUseAttribute"/> or <see cref="T:Sodium.Frp.UsedImplicitlyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:Sodium.Frp.ImplicitUseTargetFlags.Members">
+            <summary>Members of entity marked with attribute are considered used.</summary>
+        </member>
+        <member name="F:Sodium.Frp.ImplicitUseTargetFlags.WithMembers">
+            <summary>Entity marked with attribute and all its members considered used.</summary>
+        </member>
+        <member name="T:Sodium.Frp.PublicAPIAttribute">
+            <summary>
+            This attribute is intended to mark publicly available API
+            which should not be removed and so is treated as used.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.InstantHandleAttribute">
+            <summary>
+            Tells code analysis engine if the parameter is completely handled when the invoked method is on stack.
+            If the parameter is a delegate, indicates that delegate is executed while the method is executed.
+            If the parameter is an enumerable, indicates that it is enumerated while the method is executed.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.PureAttribute">
+            <summary>
+            Indicates that a method does not make any observable state changes.
+            The same as <c>System.Diagnostics.Contracts.PureAttribute</c>.
+            </summary>
+            <example><code>
+            [Pure] int Multiply(int x, int y) => x * y;
+            
+            void M() {
+              Multiply(123, 42); // Waring: Return value of pure method is not used
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.MustUseReturnValueAttribute">
+            <summary>
+            Indicates that the return value of method invocation must be used.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.ProvidesContextAttribute">
+            <summary>
+            Indicates the type member or parameter of some type, that should be used instead of all other ways
+            to get the value that type. This annotation is useful when you have some "context" value evaluated
+            and stored somewhere, meaning that all other ways to get this value must be consolidated with existing one.
+            </summary>
+            <example><code>
+            class Foo {
+              [ProvidesContext] IBarService _barService = ...;
+            
+              void ProcessNode(INode node) {
+                DoSomething(node, node.GetGlobalServices().Bar);
+                //              ^ Warning: use value of '_barService' field
+              }
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.PathReferenceAttribute">
+            <summary>
+            Indicates that a parameter is a path to a file or a folder within a web project.
+            Path can be relative or absolute, starting from web root (~).
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.SourceTemplateAttribute">
+            <summary>
+            An extension method marked with this attribute is processed by ReSharper code completion
+            as a 'Source Template'. When extension method is completed over some expression, it's source code
+            is automatically expanded like a template at call site.
+            </summary>
+            <remarks>
+            Template method body can contain valid source code and/or special comments starting with '$'.
+            Text inside these comments is added as source code when the template is applied. Template parameters
+            can be used either as additional method parameters or as identifiers wrapped in two '$' signs.
+            Use the <see cref="T:Sodium.Frp.MacroAttribute"/> attribute to specify macros for parameters.
+            </remarks>
+            <example>
+            In this example, the 'forEach' method is a source template available over all values
+            of enumerable types, producing ordinary C# 'foreach' statement and placing caret inside block:
+            <code>
+            [SourceTemplate]
+            public static void forEach&lt;T&gt;(this IEnumerable&lt;T&gt; xs) {
+              foreach (var x in xs) {
+                 //$ $END$
+              }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="T:Sodium.Frp.MacroAttribute">
+            <summary>
+            Allows specifying a macro for a parameter of a <see cref="T:Sodium.Frp.SourceTemplateAttribute">source template</see>.
+            </summary>
+            <remarks>
+            You can apply the attribute on the whole method or on any of its additional parameters. The macro expression
+            is defined in the <see cref="P:Sodium.Frp.MacroAttribute.Expression"/> property. When applied on a method, the target
+            template parameter is defined in the <see cref="P:Sodium.Frp.MacroAttribute.Target"/> property. To apply the macro silently
+            for the parameter, set the <see cref="P:Sodium.Frp.MacroAttribute.Editable"/> property value = -1.
+            </remarks>
+            <example>
+            Applying the attribute on a source template method:
+            <code>
+            [SourceTemplate, Macro(Target = "item", Expression = "suggestVariableName()")]
+            public static void forEach&lt;T&gt;(this IEnumerable&lt;T&gt; collection) {
+              foreach (var item in collection) {
+                //$ $END$
+              }
+            }
+            </code>
+            Applying the attribute on a template method parameter:
+            <code>
+            [SourceTemplate]
+            public static void something(this Entity x, [Macro(Expression = "guid()", Editable = -1)] string newguid) {
+              /*$ var $x$Id = "$newguid$" + x.ToString();
+              x.DoSomething($x$Id); */
+            }
+            </code>
+            </example>
+        </member>
+        <member name="P:Sodium.Frp.MacroAttribute.Expression">
+            <summary>
+            Allows specifying a macro that will be executed for a <see cref="T:Sodium.Frp.SourceTemplateAttribute">source template</see>
+            parameter when the template is expanded.
+            </summary>
+        </member>
+        <member name="P:Sodium.Frp.MacroAttribute.Editable">
+            <summary>
+            Allows specifying which occurrence of the target parameter becomes editable when the template is deployed.
+            </summary>
+            <remarks>
+            If the target parameter is used several times in the template, only one occurrence becomes editable;
+            other occurrences are changed synchronously. To specify the zero-based index of the editable occurrence,
+            use values >= 0. To make the parameter non-editable when the template is expanded, use -1.
+            </remarks>>
+        </member>
+        <member name="P:Sodium.Frp.MacroAttribute.Target">
+            <summary>
+            Identifies the target parameter of a <see cref="T:Sodium.Frp.SourceTemplateAttribute">source template</see> if the
+            <see cref="T:Sodium.Frp.MacroAttribute"/> is applied on a template method.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcActionAttribute">
+            <summary>
+            ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
+            is an MVC action. If applied to a method, the MVC action name is calculated
+            implicitly from the context. Use this attribute for custom wrappers similar to
+            <c>System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcAreaAttribute">
+            <summary>
+            ASP.NET MVC attribute. Indicates that a parameter is an MVC area.
+            Use this attribute for custom wrappers similar to
+            <c>System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcControllerAttribute">
+            <summary>
+            ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter is
+            an MVC controller. If applied to a method, the MVC controller name is calculated
+            implicitly from the context. Use this attribute for custom wrappers similar to
+            <c>System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String, String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcMasterAttribute">
+            <summary>
+            ASP.NET MVC attribute. Indicates that a parameter is an MVC Master. Use this attribute
+            for custom wrappers similar to <c>System.Web.Mvc.Controller.View(String, String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcModelTypeAttribute">
+            <summary>
+            ASP.NET MVC attribute. Indicates that a parameter is an MVC model type. Use this attribute
+            for custom wrappers similar to <c>System.Web.Mvc.Controller.View(String, Object)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcPartialViewAttribute">
+            <summary>
+            ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter is an MVC
+            partial view. If applied to a method, the MVC partial view name is calculated implicitly
+            from the context. Use this attribute for custom wrappers similar to
+            <c>System.Web.Mvc.Html.RenderPartialExtensions.RenderPartial(HtmlHelper, String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcSuppressViewErrorAttribute">
+            <summary>
+            ASP.NET MVC attribute. Allows disabling inspections for MVC views within a class or a method.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcDisplayTemplateAttribute">
+            <summary>
+            ASP.NET MVC attribute. Indicates that a parameter is an MVC display template.
+            Use this attribute for custom wrappers similar to 
+            <c>System.Web.Mvc.Html.DisplayExtensions.DisplayForModel(HtmlHelper, String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcEditorTemplateAttribute">
+            <summary>
+            ASP.NET MVC attribute. Indicates that a parameter is an MVC editor template.
+            Use this attribute for custom wrappers similar to
+            <c>System.Web.Mvc.Html.EditorExtensions.EditorForModel(HtmlHelper, String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcTemplateAttribute">
+            <summary>
+            ASP.NET MVC attribute. Indicates that a parameter is an MVC template.
+            Use this attribute for custom wrappers similar to
+            <c>System.ComponentModel.DataAnnotations.UIHintAttribute(System.String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcViewAttribute">
+            <summary>
+            ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
+            is an MVC view component. If applied to a method, the MVC view name is calculated implicitly
+            from the context. Use this attribute for custom wrappers similar to
+            <c>System.Web.Mvc.Controller.View(Object)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcViewComponentAttribute">
+            <summary>
+            ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
+            is an MVC view component name.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcViewComponentViewAttribute">
+            <summary>
+            ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
+            is an MVC view component view. If applied to a method, the MVC view component view name is default.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AspMvcActionSelectorAttribute">
+            <summary>
+            ASP.NET MVC attribute. When applied to a parameter of an attribute,
+            indicates that this parameter is an MVC action name.
+            </summary>
+            <example><code>
+            [ActionName("Foo")]
+            public ActionResult Login(string returnUrl) {
+              ViewBag.ReturnUrl = Url.Action("Foo"); // OK
+              return RedirectToAction("Bar"); // Error: Cannot resolve action
+            }
+            </code></example>
+        </member>
+        <member name="T:Sodium.Frp.RazorSectionAttribute">
+            <summary>
+            Razor attribute. Indicates that a parameter or a method is a Razor section.
+            Use this attribute for custom wrappers similar to 
+            <c>System.Web.WebPages.WebPageBase.RenderSection(String)</c>.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.CollectionAccessAttribute">
+            <summary>
+            Indicates how method, constructor invocation or property access
+            over collection type affects content of the collection.
+            </summary>
+        </member>
+        <member name="F:Sodium.Frp.CollectionAccessType.None">
+            <summary>Method does not use or modify content of the collection.</summary>
+        </member>
+        <member name="F:Sodium.Frp.CollectionAccessType.Read">
+            <summary>Method only reads content of the collection but does not modify it.</summary>
+        </member>
+        <member name="F:Sodium.Frp.CollectionAccessType.ModifyExistingContent">
+            <summary>Method can change content of the collection but does not add new elements.</summary>
+        </member>
+        <member name="F:Sodium.Frp.CollectionAccessType.UpdatedContent">
+            <summary>Method can add new elements to the collection.</summary>
+        </member>
+        <member name="T:Sodium.Frp.AssertionMethodAttribute">
+            <summary>
+            Indicates that the marked method is assertion method, i.e. it halts control flow if
+            one of the conditions is satisfied. To set the condition, mark one of the parameters with 
+            <see cref="T:Sodium.Frp.AssertionConditionAttribute"/> attribute.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AssertionConditionAttribute">
+            <summary>
+            Indicates the condition parameter of the assertion method. The method itself should be
+            marked by <see cref="T:Sodium.Frp.AssertionMethodAttribute"/> attribute. The mandatory argument of
+            the attribute is the assertion type.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.AssertionConditionType">
+            <summary>
+            Specifies assertion type. If the assertion method argument satisfies the condition,
+            then the execution continues. Otherwise, execution is assumed to be halted.
+            </summary>
+        </member>
+        <member name="F:Sodium.Frp.AssertionConditionType.IS_TRUE">
+            <summary>Marked parameter should be evaluated to true.</summary>
+        </member>
+        <member name="F:Sodium.Frp.AssertionConditionType.IS_FALSE">
+            <summary>Marked parameter should be evaluated to false.</summary>
+        </member>
+        <member name="F:Sodium.Frp.AssertionConditionType.IS_NULL">
+            <summary>Marked parameter should be evaluated to null value.</summary>
+        </member>
+        <member name="F:Sodium.Frp.AssertionConditionType.IS_NOT_NULL">
+            <summary>Marked parameter should be evaluated to not null value.</summary>
+        </member>
+        <member name="T:Sodium.Frp.TerminatesProgramAttribute">
+            <summary>
+            Indicates that the marked method unconditionally terminates control flow execution.
+            For example, it could unconditionally throw exception.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.LinqTunnelAttribute">
+            <summary>
+            Indicates that method is pure LINQ method, with postponed enumeration (like Enumerable.Select,
+            .Where). This annotation allows inference of [InstantHandle] annotation for parameters
+            of delegate type by analyzing LINQ method chains.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.NoEnumerationAttribute">
+            <summary>
+            Indicates that IEnumerable, passed as parameter, is not enumerated.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.RegexPatternAttribute">
+            <summary>
+            Indicates that parameter is regular expression pattern.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.NoReorderAttribute">
+            <summary>
+            Prevents the Member Reordering feature from tossing members of the marked class.
+            </summary>
+            <remarks>
+            The attribute must be mentioned in your member reordering patterns
+            </remarks>
+        </member>
+        <member name="T:Sodium.Frp.XamlItemsControlAttribute">
+            <summary>
+            XAML attribute. Indicates the type that has <c>ItemsSource</c> property and should be treated
+            as <c>ItemsControl</c>-derived type, to enable inner items <c>DataContext</c> type resolve.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.XamlItemBindingOfItemsControlAttribute">
+            <summary>
+            XAML attribute. Indicates the property of some <c>BindingBase</c>-derived type, that
+            is used to bind some item of <c>ItemsControl</c>-derived type. This annotation will
+            enable the <c>DataContext</c> type resolve for XAML bindings for such properties.
+            </summary>
+            <remarks>
+            Property should have the tree ancestor of the <c>ItemsControl</c> type or
+            marked with the <see cref="T:Sodium.Frp.XamlItemsControlAttribute"/> attribute.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.LoopedBehaviorExtensionMethods.AsBehavior``1(Sodium.Frp.LoopedBehavior{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.LoopedBehavior`1" /> as a <see cref="T:Sodium.Frp.Behavior`1" />.
+            </summary>
+            <typeparam name="T">The type of the looped behavior.</typeparam>
+            <param name="b">The looped behavior.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.LoopedBehavior`1" /> as a <see cref="T:Sodium.Frp.Behavior`1" />.</returns>
+        </member>
+        <member name="M:Sodium.Frp.LoopedCellExtensionMethods.AsCell``1(Sodium.Frp.LoopedCell{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.LoopedCell`1" /> as a <see cref="T:Sodium.Frp.Cell`1" />.
+            </summary>
+            <typeparam name="T">The type of the looped cell.</typeparam>
+            <param name="c">The looped cell.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.LoopedCell`1" /> as a <see cref="T:Sodium.Frp.Cell`1" />.</returns>
+        </member>
+        <member name="M:Sodium.Frp.LoopedStreamExtensionMethods.AsStream``1(Sodium.Frp.LoopedStream{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.LoopedStream`1" /> as a <see cref="T:Sodium.Frp.Stream`1" />.
+            </summary>
+            <typeparam name="T">The type of the looped stream.</typeparam>
+            <param name="s">The looped stream.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.LoopedStream`1" /> as a <see cref="T:Sodium.Frp.Stream`1" />.</returns>
+        </member>
+        <member name="T:Sodium.Frp.Operational">
+            <summary>
+                Operational primitives that must be used with care.
+            </summary>
+        </member>
+        <member name="M:Sodium.Frp.Operational.Updates``1(Sodium.Frp.Behavior{``0})">
+            <summary>
+                A stream that gives the updates/steps for a behavior.
+            </summary>
+            <typeparam name="T">The type of the values in the behavior.</typeparam>
+            <param name="b"></param>
+            <returns></returns>
+            <remarks>
+                This is an OPERATIONAL primitive, which is not part of the main Sodium
+                API.  It breaks the property of non-detectability of behavior steps/updates.
+                The rule with this primitive is that you should only use it in functions
+                that do not allow the caller to detect the behavior updates.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.Operational.Value``1(Sodium.Frp.Behavior{``0})">
+            <summary>
+                A stream that is guaranteed to fire once upon listening, giving the current
+                value of a behavior, and thereafter gives the updates/steps for the behavior.
+            </summary>
+            <typeparam name="T">The type of the values in the behavior.</typeparam>
+            <param name="b"></param>
+            <returns></returns>
+            <remarks>
+                This is an OPERATIONAL primitive, which is not part of the main Sodium
+                API.  It breaks the property of non-detectability of behavior steps/updates.
+                The rule with this primitive is that you should only use it in functions
+                that do not allow the caller to detect the behavior updates.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.Operational.Defer``1(Sodium.Frp.Stream{``0})">
+            <summary>
+                Push each stream event onto a new transaction guaranteed to come before the next externally
+                initiated transaction.  Same as <see cref="M:Sodium.Frp.Operational.Split``2(Sodium.Frp.Stream{``1})" /> but it works on a single
+                value.
+            </summary>
+            <typeparam name="T">The type of the stream to defer.</typeparam>
+            <param name="s">The stream to defer.</param>
+            <returns>A stream firing the deferred event firings.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Operational.Split``2(Sodium.Frp.Stream{``1})">
+            <summary>
+                Push each stream event in the list of streams onto a newly created transaction guaranteed
+                to come before the next externally initiated transaction.  Note that the semantics
+                are such that two different invocations of this method can put stream events into the same
+                new transaction, so the resulting stream's events could be simultaneous with
+                events output by <see cref="M:Sodium.Frp.Operational.Split``2(Sodium.Frp.Stream{``1})" /> or <see cref="M:Sodium.Frp.Operational.Defer``1(Sodium.Frp.Stream{``0})" />
+                invoked elsewhere in the code.
+            </summary>
+            <typeparam name="T">The collection item type of the stream to split.</typeparam>
+            <typeparam name="TCollection">The collection type of the stream to split.</typeparam>
+            <param name="s">The stream to split.</param>
+            <returns>A stream firing the split event firings.</returns>
+        </member>
+        <member name="T:Sodium.Frp.Stream">
+            <summary>
+                Helper methods for creating a <see cref="T:Sodium.Frp.Stream`1" />.
+            </summary>
+        </member>
+        <member name="M:Sodium.Frp.Stream.Never``1">
+            <summary>
+                Creates a stream that never fires.
+            </summary>
+            <typeparam name="T">The type of the values that would be fired by the stream if it did fire values.</typeparam>
+            <returns>A stream that never fires.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Stream.CreateSink``1">
+            <summary>
+                Creates a StreamSink that throws an exception if <see cref="M:Sodium.Frp.Stream`1.Send(Sodium.Frp.TransactionInternal,`0)" /> is called more than once per
+                transaction.
+            </summary>
+            <typeparam name="T">The type of values fired by the stream sink.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Stream.CreateSink``1(System.Func{``0,``0,``0})">
+            <summary>
+                Construct a StreamSink that uses
+                <param name="coalesce" />
+                to combine values if <see cref="M:Sodium.Frp.Stream`1.Send(Sodium.Frp.TransactionInternal,`0)" /> is called more than once per transaction.
+            </summary>
+            <param name="coalesce">
+                Function to combine values when <see cref="M:Sodium.Frp.Stream`1.Send(Sodium.Frp.TransactionInternal,`0)" /> is called more than once per
+                transaction.
+            </param>
+            <typeparam name="T">The type of values fired by the stream sink.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Stream.CreateLoop``1">
+            <summary>
+                Creates a <see cref="T:Sodium.Frp.StreamLoop`1" />.  This must be called and looped from within the same transaction.
+            </summary>
+            <typeparam name="T">The type of values in the stream loop.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Stream.Loop``1">
+            <summary>
+                Creates a helper to loop over a stream for the specified type.
+            </summary>
+            <typeparam name="T">The type of the stream to loop.</typeparam>
+            <returns>A <see cref="T:Sodium.Frp.StreamLooper`1"/> which should be used to complete the loop.</returns>
+        </member>
+        <member name="T:Sodium.Frp.StreamLooper`1">
+            <summary>
+                A helper to complete a loop over a stream.
+            </summary>
+            <typeparam name="T">The type of the stream being looped.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.StreamLooper`1.WithCaptures``1(System.Func{Sodium.Frp.LoopedStream{`0},System.ValueTuple{Sodium.Frp.Stream{`0},``0}})">
+            <summary>
+                Loop a stream and return a value tuple containing the resulting stream and captures.
+            </summary>
+            <typeparam name="TCaptures">The type of the captures to return.</typeparam>
+            <param name="f">A function which takes the stream loop and returns a value tuple containing the resulting stream and captures.</param>
+            <returns>A value tuple containing the resulting stream and captures.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamLooper`1.WithoutCaptures(System.Func{Sodium.Frp.LoopedStream{`0},Sodium.Frp.Stream{`0}})">
+            <summary>
+                Loop a stream and return the resulting stream.
+            </summary>
+            <param name="f">A function which takes the stream loop and returns the resulting stream.</param>
+            <returns>The resulting stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Listen``1(Sodium.Frp.Stream{``0},System.Action{``0})">
+            <summary>
+                Listen for events/firings on this stream.  The returned <see cref="T:Sodium.Frp.IStrongListener" /> may be
+                disposed to stop listening.  This is an OPERATIONAL mechanism for interfacing between
+                the world of I/O and FRP.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="handler">The handler to execute for values fired by the stream.</param>
+            <returns>An <see cref="T:Sodium.Frp.IStrongListener" /> which may be disposed to stop listening.</returns>
+            <remarks>
+                <para>
+                    No assumptions should be made about what thread the handler is called on and it should not block.
+                    Neither <see cref="!:StreamSink&lt;T&gt;.Send" /> nor <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" /> may be called from the
+                    handler.
+                    They will throw an exception because this method is not meant to be used to create new primitives.
+                </para>
+                <para>
+                    If the <see cref="T:Sodium.Frp.IStrongListener" /> is not disposed, it will continue to listen until this stream is either
+                    disposed or garbage collected.
+                </para>
+                <para>
+                    To ensure this <see cref="T:Sodium.Frp.IStrongListener" /> is disposed as soon as the stream it is listening to is either
+                    disposed, pass the returned listener to this stream's <see cref="M:Sodium.Frp.StreamExtensionMethods.AttachListener``1(Sodium.Frp.Stream{``0},Sodium.Frp.IListener)" /> method.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenWeak``1(Sodium.Frp.Stream{``0},System.Action{``0})">
+            <summary>
+                Listen for events/firings on this stream.  The returned <see cref="T:Sodium.Frp.IWeakListener" /> may be
+                disposed to stop listening, or it will automatically stop listening when it is garbage collected.
+                This is an OPERATIONAL mechanism for interfacing between the world of I/O and FRP.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="handler">The handler to execute for values fired by the stream.</param>
+            <returns>An <see cref="T:Sodium.Frp.IWeakListener" /> which may be disposed to stop listening.</returns>
+            <remarks>
+                <para>
+                    No assumptions should be made about what thread the handler is called on and it should not block.
+                    Neither <see cref="!:StreamSink&lt;T&gt;.Send" /> nor <see cref="M:Sodium.Frp.CellSinkExtensionMethods.Send``1(Sodium.Frp.CellSink{``0},``0)" /> may be called from the
+                    handler.
+                    They will throw an exception because this method is not meant to be used to create new primitives.
+                </para>
+                <para>
+                    If the <see cref="T:Sodium.Frp.IWeakListener" /> is not disposed, it will continue to listen until this stream is either
+                    disposed or garbage collected or the listener itself is garbage collected.
+                </para>
+                <para>
+                    To ensure this <see cref="T:Sodium.Frp.IWeakListener" /> is disposed as soon as the stream it is listening to is either
+                    disposed, pass the returned listener to this stream's <see cref="M:Sodium.Frp.StreamExtensionMethods.AttachListener``1(Sodium.Frp.Stream{``0},Sodium.Frp.IListener)" /> method.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.AttachListener``1(Sodium.Frp.Stream{``0},Sodium.Frp.IListener)">
+            <summary>
+                Attach a listener to this stream so it doesn't get garbage collected until this stream is garbage collected.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="listener">The listener to garbage collect along with this stream.</param>
+            <returns>
+                A new stream equivalent to this stream which will garbage collect <paramref name="listener" /> when it is
+                garbage collected.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenOnce``1(Sodium.Frp.Stream{``0},System.Action{``0})">
+            <summary>
+                Handle the first event on this stream and then automatically unregister.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="handler">The handler to execute for values fired by this stream.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenOnceAsync``1(Sodium.Frp.Stream{``0})">
+            <summary>
+                Handle the first event on this stream and then automatically unregister.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <returns>A task which completes when a value is fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenOnceAsync``1(Sodium.Frp.Stream{``0},System.Threading.CancellationToken)">
+            <summary>
+                Handle the first event on this stream and then automatically unregister.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>A task which completes when a value is fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenOnceAsync``1(Sodium.Frp.Stream{``0},System.Func{System.Threading.Tasks.Task{``0},System.Threading.Tasks.Task})">
+            <summary>
+                Handle the first event on this stream and then automatically unregister.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="modifyTask">A function to modify the task produced by this method.</param>
+            <returns>A task which completes when a value is fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenOnceAsync``1(Sodium.Frp.Stream{``0},System.Func{System.Threading.Tasks.Task{``0},System.Threading.Tasks.Task},System.Threading.CancellationToken)">
+            <summary>
+                Handle the first event on this stream and then automatically unregister.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="modifyTask">A function to modify the task produced by this method.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>A task which completes when a value is fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenOnceAsync``2(Sodium.Frp.Stream{``0},System.Func{System.Threading.Tasks.Task{``0},System.Threading.Tasks.Task{``1}})">
+            <summary>
+                Handle the first event on this stream and then automatically unregister.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TResult">The type of the result of the task.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="modifyTask">A function to modify the task produced by this method.</param>
+            <returns>A task which completes when a value is fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.ListenOnceAsync``2(Sodium.Frp.Stream{``0},System.Func{System.Threading.Tasks.Task{``0},System.Threading.Tasks.Task{``1}},System.Threading.CancellationToken)">
+            <summary>
+                Handle the first event on this stream and then automatically unregister.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TResult">The type of the result of the task.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="modifyTask">A function to modify the task produced by this method.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>A task which completes when a value is fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Map``2(Sodium.Frp.Stream{``0},System.Func{``0,``1})">
+            <summary>
+                Transform the stream values according to the supplied function, so the returned
+                stream's values reflect the value of the function applied to the input stream's values.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TResult">The type of values fired by the returned stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="f">
+                Function to apply to convert the values.  It may construct FRP logic or use <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" />,
+                in which case it is equivalent to calling <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``2(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1})" /> on the cell.
+                Other than this, the function must be a pure function.
+            </param>
+            <returns>A stream which fires values transformed by <paramref name="f" /> for each value fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.MapTo``2(Sodium.Frp.Stream{``0},``1)">
+            <summary>
+                Transform the stream values to the specified constant value.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TResult">The type of the constant value fired by the returned stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="value">
+                The constant value to return from this mapping.
+            </param>
+            <returns>A stream which fires the constant value for each value fired by this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Hold``1(Sodium.Frp.Stream{``0},``0)">
+            <summary>
+                Create a cell with the specified initial value, that is updated by this stream's values.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="initialValue">The initial value of the cell.</param>
+            <returns>A cell with the specified initial value, that is updated by this stream's values.</returns>
+            <remarks>
+                There is an implicit delay; state updates caused by stream event firings don't become
+                visible as the cell's current value as viewed by
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``3(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1},System.Func{``0,``1,``2})" />
+                until the following transaction. To put this another way,
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``3(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1},System.Func{``0,``1,``2})" /> always sees the value of a cell as
+                it was before
+                any state changes from the current transaction.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.HoldLazy``1(Sodium.Frp.Stream{``0},System.Lazy{``0})">
+            <summary>
+                Create a cell with the specified lazily initialized initial value, that is updated by this stream's values.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="initialValue">The lazily initialized initial value of the cell.</param>
+            <returns>A cell with the specified lazily initialized initial value, that is updated by this stream's values.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``2(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1})">
+            <summary>
+                Return a stream whose events are the values of the cell at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="c">The cell to combine with.</param>
+            <returns>A stream whose events are the values of the cell at the time of the stream event firing.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``2(Sodium.Frp.Stream{``0},Sodium.Frp.Behavior{``1})">
+            <summary>
+                Return a stream whose events are the values of the behavior at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="b">The behavior to combine with.</param>
+            <returns>A stream whose events are the values of the behavior at the time of the stream event firing.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``3(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1},System.Func{``0,``1,``2})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the cell at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the cell.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="c">The cell to combine with.</param>
+            <param name="f">A function to convert the stream value and cell value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the cell at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``3(Sodium.Frp.Stream{``0},Sodium.Frp.Behavior{``1},System.Func{``0,``1,``2})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the behavior at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the behavior.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="b">The behavior to combine with.</param>
+            <param name="f">A function to convert the stream value and behavior value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the behavior at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``4(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1},Sodium.Frp.Cell{``2},System.Func{``0,``1,``2,``3})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the cells at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the first cell.</typeparam>
+            <typeparam name="T2">The type of the second cell.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="c1">The first cell to combine with.</param>
+            <param name="c2">The second cell to combine with.</param>
+            <param name="f">A function to convert the stream value and cell value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the cells at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``4(Sodium.Frp.Stream{``0},Sodium.Frp.Behavior{``1},Sodium.Frp.Behavior{``2},System.Func{``0,``1,``2,``3})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the behaviors at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the first behavior.</typeparam>
+            <typeparam name="T2">The type of the second behavior.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="b1">The first behavior to combine with.</param>
+            <param name="b2">The second behavior to combine with.</param>
+            <param name="f">A function to convert the stream value and behavior value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the behaviors at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``5(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1},Sodium.Frp.Cell{``2},Sodium.Frp.Cell{``3},System.Func{``0,``1,``2,``3,``4})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the cells at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the first cell.</typeparam>
+            <typeparam name="T2">The type of the second cell.</typeparam>
+            <typeparam name="T3">The type of the third cell.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="c1">The first cell to combine with.</param>
+            <param name="c2">The second cell to combine with.</param>
+            <param name="c3">The third cell to combine with.</param>
+            <param name="f">A function to convert the stream value and cell value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the cells at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``5(Sodium.Frp.Stream{``0},Sodium.Frp.Behavior{``1},Sodium.Frp.Behavior{``2},Sodium.Frp.Behavior{``3},System.Func{``0,``1,``2,``3,``4})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the behaviors at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the first behavior.</typeparam>
+            <typeparam name="T2">The type of the second behavior.</typeparam>
+            <typeparam name="T3">The type of the third behavior.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="b1">The first behavior to combine with.</param>
+            <param name="b2">The second behavior to combine with.</param>
+            <param name="b3">The third behavior to combine with.</param>
+            <param name="f">A function to convert the stream value and behavior value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the behaviors at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``6(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1},Sodium.Frp.Cell{``2},Sodium.Frp.Cell{``3},Sodium.Frp.Cell{``4},System.Func{``0,``1,``2,``3,``4,``5})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the cells at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the first cell.</typeparam>
+            <typeparam name="T2">The type of the second cell.</typeparam>
+            <typeparam name="T3">The type of the third cell.</typeparam>
+            <typeparam name="T4">The type of the fourth cell.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="c1">The first cell to combine with.</param>
+            <param name="c2">The second cell to combine with.</param>
+            <param name="c3">The third cell to combine with.</param>
+            <param name="c4">The fourth cell to combine with.</param>
+            <param name="f">A function to convert the stream value and cell value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the cells at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Snapshot``6(Sodium.Frp.Stream{``0},Sodium.Frp.Behavior{``1},Sodium.Frp.Behavior{``2},Sodium.Frp.Behavior{``3},Sodium.Frp.Behavior{``4},System.Func{``0,``1,``2,``3,``4,``5})">
+            <summary>
+                Return a stream whose events are the result of the combination using the specified
+                function of the input stream's value and the value of the behaviors at the time of the stream event firing.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="T1">The type of the first behavior.</typeparam>
+            <typeparam name="T2">The type of the second behavior.</typeparam>
+            <typeparam name="T3">The type of the third behavior.</typeparam>
+            <typeparam name="T4">The type of the fourth behavior.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="b1">The first behavior to combine with.</param>
+            <param name="b2">The second behavior to combine with.</param>
+            <param name="b3">The third behavior to combine with.</param>
+            <param name="b4">The fourth behavior to combine with.</param>
+            <param name="f">A function to convert the stream value and behavior value into a return value.</param>
+            <returns>
+                A stream whose events are the result of the combination using the specified function of the input stream's
+                value and the value of the behaviors at the time of the stream event firing.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.OrElse``1(Sodium.Frp.Stream{``0},Sodium.Frp.Stream{``0})">
+            <summary>
+                Merges this stream with another stream and drops the other stream's value in the simultaneous case.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="s2">The stream to merge with.</param>
+            <returns>
+                A stream that is the result of merging this stream with another stream and dropping the other stream's value in
+                the simultaneous case.
+            </returns>
+            <remarks>
+                <para>
+                    In the case where two stream events are simultaneous (i.e. both
+                    within the same transaction), the event value from this stream will take precedence, and
+                    the event value from <paramref name="s2" /> will be dropped.
+                    To specify a custom combining function, use <see cref="M:Sodium.Frp.StreamExtensionMethods.Merge``1(Sodium.Frp.Stream{``0},Sodium.Frp.Stream{``0},System.Func{``0,``0,``0})" />.
+                    s1.OrElse(s2) is equivalent to s1.Merge(s2, (l, r) =&gt; l).
+                </para>
+                <para>
+                    The name OrElse is used instead of Merge to make it clear that care should be taken because stream events can
+                    be dropped.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Merge``1(Sodium.Frp.Stream{``0},Sodium.Frp.Stream{``0},System.Func{``0,``0,``0})">
+            <summary>
+                Merge two streams of the same type into one, so that stream event values on either input appear on the returned
+                stream.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="s2">The stream to merge this stream with.</param>
+            <param name="f">
+                Function to combine the values. It may construct FRP logic or use <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" />.
+                Apart from this the function must be pure.
+            </param>
+            <returns>
+                A stream which is the combination of event values from this stream and stream
+                <param name="s2" />
+                .
+            </returns>
+            <remarks>
+                If the events are simultaneous (that is, one event from this stream and one from <paramref name="s2" />
+                occurring in the same transaction), combine them into one using the specified combining function
+                so that the returned stream is guaranteed only ever to have one event per transaction.
+                The event from this stream will appear at the left input of the combining function, and
+                the event from <paramref name="s2" /> will appear at the right.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Filter``1(Sodium.Frp.Stream{``0},System.Func{``0,System.Boolean})">
+            <summary>
+                Return a stream that only outputs events for which the predicate returns <code>true</code>.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="predicate">The predicate used to filter the stream.</param>
+            <returns>A stream that only outputs events for which the predicate returns <code>true</code>.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Gate``1(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{System.Boolean})">
+            <summary>
+                Return a stream that only outputs events from the input stream when the specified cell's value is <code>true</code>
+                .
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="c">The cell that acts as a gate.</param>
+            <returns>A stream that only outputs events from the input stream when the specified cell's value is <code>true</code>.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Gate``1(Sodium.Frp.Stream{``0},Sodium.Frp.Behavior{System.Boolean})">
+            <summary>
+                Return a stream that only outputs events from the input stream when the specified behavior's value is <code>true</code>
+                .
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="b">The behavior that acts as a gate.</param>
+            <returns>A stream that only outputs events from the input stream when the specified behavior's value is <code>true</code>.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Calm``1(Sodium.Frp.Stream{``0})">
+            <summary>
+                Return a stream that only outputs events which have a different value than the previous event.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <returns>A stream that only outputs events which have a different value than the previous event.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Calm``1(Sodium.Frp.Stream{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+                Return a stream that only outputs events which have a different value than the previous event.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="comparer">The equality comparer to use to determine if two items are equal.</param>
+            <returns>A stream that only outputs events which have a different value than the previous event.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Calm``1(Sodium.Frp.Stream{``0},System.Func{``0,``0,System.Boolean})">
+            <summary>
+                Return a stream that only outputs events which have a different value than the previous event.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="areEqual">The function to use to determine if two items are equal.</param>
+            <returns>A stream that only outputs events which have a different value than the previous event.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Collect``3(Sodium.Frp.Stream{``0},``1,System.Func{``0,``1,System.ValueTuple{``2,``1}})">
+            <summary>
+                Transform a stream with a generalized state loop (a Mealy machine).
+                The function is passed the input and the old state and returns the new state and output value.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TState">The type of the state of the Mealy machine.</typeparam>
+            <typeparam name="TReturn">The type of the return value.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="initialState">The initial state of the Mealy machine.</param>
+            <param name="f">
+                Function to apply to update the state.  It may construct FRP logic or use
+                <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" />, in which case it is equivalent to snapshotting the cell with
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``2(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1})" />.  Apart from this, the function must be pure.
+            </param>
+            <returns>A stream resulting from the transformation of this stream by the Mealy machine.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.CollectLazy``3(Sodium.Frp.Stream{``0},System.Lazy{``1},System.Func{``0,``1,System.ValueTuple{``2,``1}})">
+            <summary>
+                Transform a stream with a generalized state loop (a Mealy machine) using a lazily evaluated initial state.
+                The function is passed the input and the old state and returns the new state and output value.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TState">The type of the state of the Mealy machine.</typeparam>
+            <typeparam name="TReturn">The type of the return value.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="initialState">The lazily evaluated initial state of the Mealy machine.</param>
+            <param name="f">
+                Function to apply to update the state.  It may construct FRP logic or use
+                <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" />, in which case it is equivalent to snapshotting the cell with
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``2(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1})" />.  Apart from this, the function must be pure.
+            </param>
+            <returns>A stream resulting from the transformation of this stream by the Mealy machine.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Accum``2(Sodium.Frp.Stream{``0},``1,System.Func{``0,``1,``1})">
+            <summary>
+                Accumulate on this stream, outputting the new state each time an event fires.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TReturn">The type of the accumulated state.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="initialState">The initial state.</param>
+            <param name="f">
+                Function to apply to update the state.  It may construct FRP logic or use
+                <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" />, in which case it is equivalent to snapshotting the cell with
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``2(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1})" />.  Apart from this, the function must be pure.
+            </param>
+            <returns>A cell holding the accumulated state of this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.AccumLazy``2(Sodium.Frp.Stream{``0},System.Lazy{``1},System.Func{``0,``1,``1})">
+            <summary>
+                Accumulate on this stream, outputting the new state each time an event fires using a lazily evaluated initial state.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <typeparam name="TReturn">The type of the accumulated state.</typeparam>
+            <param name="s">The stream.</param>
+            <param name="initialState">The lazily evaluated initial state.</param>
+            <param name="f">
+                Function to apply to update the state.  It may construct FRP logic or use
+                <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" />, in which case it is equivalent to snapshotting the cell with
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Snapshot``2(Sodium.Frp.Stream{``0},Sodium.Frp.Cell{``1})" />.  Apart from this, the function must be pure.
+            </param>
+            <returns>A cell holding the accumulated state of this stream.</returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Once``1(Sodium.Frp.Stream{``0})">
+            <summary>
+                Return a stream that outputs only one value: the next event of the input stream starting from the transaction in
+                which this method was invoked.
+            </summary>
+            <typeparam name="T">The type of the stream.</typeparam>
+            <param name="s">The stream.</param>
+            <returns>
+                A stream that outputs only one value: the next event of the input stream starting from the transaction in
+                which this method was invoked.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.OrElse``1(System.Collections.Generic.IEnumerable{Sodium.Frp.Stream{``0}})">
+            <summary>
+                Merges a collection of streams and drops the stream's value specified earlier in the collection in the simultaneous
+                case.
+            </summary>
+            <param name="s">The collection of streams to merge.</param>
+            <returns>
+                A stream that is the result of merging the collection of streams and dropping the stream's value specified
+                earlier in the collection in the simultaneous case.
+            </returns>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.Merge``1(System.Collections.Generic.IEnumerable{Sodium.Frp.Stream{``0}},System.Func{``0,``0,``0})">
+            <summary>
+                Merge a collection of streams of the same type into one, so that events on any input appear on the returned stream.
+            </summary>
+            <param name="s">The collection of streams to merge.</param>
+            <param name="f">
+                Function to combine the values. It may construct FRP logic or use <see cref="M:Sodium.Frp.CellExtensionMethods.Sample``1(Sodium.Frp.Cell{``0})" />.  Apart
+                from this the function must be pure.
+            </param>
+            <returns>
+                A stream which is the combination of event values from the collection of streams
+                <param name="s" />
+                .
+            </returns>
+            <remarks>
+                If the events are simultaneous (that is, one event from more than one stream
+                occurring in the same transaction), combine them into one using the specified combining function
+                so that the returned stream is guaranteed only ever to have one event per transaction.
+                The event from the stream earlier in the collection will appear at the left input of the combining function, and
+                the event from the stream later in the collection will appear at the right.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.StreamExtensionMethods.FilterMaybe``1(Sodium.Frp.Stream{Sodium.Functional.Maybe{``0}})">
+            <summary>
+                Return a stream that only outputs events that have values, removing the <see cref="T:Sodium.Functional.Maybe`1" /> wrapper, and
+                discarding <see cref="F:Sodium.Functional.Maybe.None" /> values.
+            </summary>
+            <param name="s">The stream of <see cref="T:Sodium.Functional.Maybe`1" /> values to filter.</param>
+            <returns>
+                A stream that only outputs events that have values, removing the <see cref="T:Sodium.Functional.Maybe`1" /> wrapper, and
+                discarding <see cref="F:Sodium.Functional.Maybe.None" /> values.
+            </returns>
+        </member>
+        <member name="T:Sodium.Frp.StreamLoop`1">
+            <summary>
+                A forward reference for a <see cref="T:Sodium.Frp.Stream`1" /> equivalent to the <see cref="T:Sodium.Frp.Stream`1" /> that is referenced.
+            </summary>
+            <typeparam name="T">The type of values fired by the stream loop.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.StreamLoop`1.Loop(Sodium.Frp.Stream{`0})">
+            <summary>
+                Resolve the loop to specify what the <see cref="T:Sodium.Frp.StreamLoop`1" /> was a forward reference to.  This method
+                must be called inside the same transaction as the one in which this <see cref="T:Sodium.Frp.StreamLoop`1" /> instance was
+                created and used.
+                This requires an explicit transaction to be created with <see cref="M:Sodium.Frp.Transaction.Run``1(System.Func{``0})" /> or
+                <see cref="M:Sodium.Frp.Transaction.RunVoid(System.Action)" />.
+            </summary>
+            <param name="stream">The stream that was forward referenced.</param>
+        </member>
+        <member name="M:Sodium.Frp.StreamSinkExtensionMethods.Send``1(Sodium.Frp.StreamSink{``0},``0)">
+            <summary>
+                Send a value.  This method may not be called from inside handlers registered with
+                <see cref="M:Sodium.Frp.StreamExtensionMethods.Listen``1(Sodium.Frp.Stream{``0},System.Action{``0})" /> or <see cref="M:Sodium.Frp.CellExtensionMethods.Listen``1(Sodium.Frp.Cell{``0},System.Action{``0})" />.
+                An exception will be thrown, because sinks are for interfacing I/O to FRP only.  They are not meant to be used to
+                define new primitives.
+            </summary>
+            <typeparam name="T">The type of the stream sink.</typeparam>
+            <param name="s">The stream sink.</param>
+            <param name="a">The value to send.</param>
+        </member>
+        <member name="M:Sodium.Frp.StreamSinkExtensionMethods.AsStream``1(Sodium.Frp.StreamSink{``0})">
+            <summary>
+                Return a reference to this <see cref="T:Sodium.Frp.StreamSink`1" /> as a <see cref="T:Sodium.Frp.Stream`1" />.
+            </summary>
+            <typeparam name="T">The type of the stream sink.</typeparam>
+            <param name="s">The stream sink.</param>
+            <returns>A reference to this <see cref="T:Sodium.Frp.StreamSink`1" /> as a <see cref="T:Sodium.Frp.Stream`1" />.</returns>
+        </member>
+        <member name="T:Sodium.Frp.Time.ITimer">
+            <summary>
+                An interface for a handle to cancel a timer.
+            </summary>
+            <remarks>
+                Disposing of the timer has the same effect as calling <see cref="M:Sodium.Frp.Time.ITimer.Cancel" />.
+                Only one or the other needs to be called to cancel the timer.
+                Otherwise, objects implementing this interface do not need to be disposed.
+            </remarks>
+        </member>
+        <member name="P:Sodium.Frp.Time.ITimerSystem`1.Time">
+            <summary>
+                Gets a behavior giving the current clock time.
+            </summary>
+        </member>
+        <member name="M:Sodium.Frp.Time.ITimerSystem`1.At(Sodium.Frp.Cell{Sodium.Functional.Maybe{`0}})">
+            <summary>
+                A timer that fires at the specified time.
+            </summary>
+            <param name="t">The time to fire at.</param>
+            <returns>A stream which fires at the specified time.</returns>
+        </member>
+        <member name="T:Sodium.Frp.Time.ITimerSystemImplementation`1">
+            <summary>
+                An interface for implementations of FRP timer systems.
+            </summary>
+            <typeparam name="T">The underlying type of the timer's time values.</typeparam>
+        </member>
+        <member name="M:Sodium.Frp.Time.ITimerSystemImplementation`1.SetTimer(`0,System.Action)">
+            <summary>
+                Set a timer that will execute the specified callback at the specified time.
+            </summary>
+            <param name="t">The time at which to execute the callback.</param>
+            <param name="callback">The callback to execute.</param>
+            <returns>A handle that can be used to cancel the timer.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Time.ITimerSystemImplementation`1.RunTimersTo(`0)">
+            <summary>
+                Run all pending timers scheduled for up to and including the specified time.
+            </summary>
+        </member>
+        <member name="P:Sodium.Frp.Time.ITimerSystemImplementation`1.Now">
+            <summary>
+                Return the current clock time.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.Time.SecondsTimerSystem">
+            <summary>
+                A timer system using the number of seconds since the application started.
+            </summary>
+        </member>
+        <member name="T:Sodium.Frp.Time.SystemClockTimerSystem">
+            <summary>
+                A timer system using the current system clock.
+            </summary>
+        </member>
+        <member name="P:Sodium.Frp.Time.TimerSystem`1.Time">
+            <summary>
+                Gets a behavior giving the current clock time.
+            </summary>
+        </member>
+        <member name="M:Sodium.Frp.Time.TimerSystem`1.At(Sodium.Frp.Cell{Sodium.Functional.Maybe{`0}})">
+            <summary>
+                A timer that fires at the specified time.
+            </summary>
+            <param name="t">The time to fire at.</param>
+            <returns>A stream which fires at the specified time.</returns>
+        </member>
+        <member name="T:Sodium.Frp.Transaction">
+            <summary>
+                A class for managing transactions.
+            </summary>
+        </member>
+        <member name="M:Sodium.Frp.Transaction.IsActive">
+            <summary>
+                Return whether or not there is a current transaction.
+            </summary>
+            <returns><code>true</code> if there is a current transaction, <code>false</code> otherwise.</returns>
+        </member>
+        <member name="M:Sodium.Frp.Transaction.RunVoid(System.Action)">
+            <summary>
+                Execute the specified action inside a single transaction.
+            </summary>
+            <param name="action">The action to execute.</param>
+            <remarks>
+                In most cases this is not needed, because all primitives will create their own transaction automatically.
+                It is useful for running multiple reactive operations atomically.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.Transaction.Run``1(System.Func{``0})">
+            <summary>
+                Execute the specified function inside a single transaction.
+            </summary>
+            <typeparam name="T">The type of the value returned.</typeparam>
+            <param name="f">The function to execute.</param>
+            <returns>The return value of <paramref name="f" />.</returns>
+            <remarks>
+                In most cases this is not needed, because all primitives will create their own transaction automatically.
+                It is useful for running multiple reactive operations atomically.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.Transaction.OnStart(System.Action)">
+            <summary>
+                Add an action that will be executed whenever a transaction is started.
+            </summary>
+            <param name="action"></param>
+            <remarks>
+                The action may start transactions itself, which will not cause the hooks to execute recursively.
+                The main use case of this is for the implementation of a time/alarm system.
+            </remarks>
+        </member>
+        <member name="M:Sodium.Frp.Transaction.Post(System.Action)">
+            <summary>
+                Execute an action after the current transaction is closed
+                or immediately if there is no current transaction.
+            </summary>
+            <param name="action">
+                The action to run after the current transaction is closed
+                or immediately if there is no current transaction.
+            </param>
+        </member>
+    </members>
+</doc>

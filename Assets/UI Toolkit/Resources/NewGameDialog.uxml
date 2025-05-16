@@ -1,0 +1,52 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Resources/NewGameDialog.uss?fileID=7433441132597879392&amp;guid=46f52a07e84ee424a8b4b14186c547ac&amp;type=3#NewGameDialog" />
+    <Style src="project://database/Assets/UI%20Toolkit/Resources/Common.uss?fileID=7433441132597879392&amp;guid=27d4f1fe244b430db6cb562969bbb34b&amp;type=3#Common" />
+    <ui:VisualElement name="dialog" class="dialog">
+        <ui:VisualElement name="headerPane" class="header">
+            <ui:Label tabindex="-1" text="Set up game" display-tooltip-when-elided="true" />
+        </ui:VisualElement>
+        <ui:VisualElement name="content" class="content">
+            <ui:VisualElement name="specification">
+                <ui:VisualElement name="world">
+                    <ui:Label tabindex="-1" text="World" display-tooltip-when-elided="true" name="worldHeader" class="paneHeader" />
+                    <ui:VisualElement name="worldContent">
+                        <ui:VisualElement name="terrainPane" class="worldSubPane">
+                            <ui:Label tabindex="-1" text="Terrain" display-tooltip-when-elided="true" class="paneHeader" />
+                            <ui:VisualElement name="terrainSize" class="terrainSize">
+                                <ui:TextField picking-mode="Ignore" label="Width" name="width" />
+                                <ui:TextField picking-mode="Ignore" label="Height" name="height" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="nationsPane" class="worldSubPane">
+                            <ui:Label tabindex="-1" text="Nations" display-tooltip-when-elided="true" class="paneHeader" />
+                            <ui:UnsignedIntegerField label="Number of nations" name="UnsignedIntegerField" />
+                            <ui:MultiColumnListView name="nationsTable" fixed-item-height="20">
+                                <!-- Columns and Column aren't Visual Elements or controls. They are considered attributes of MultiColumnListView. -->
+                                <ui:Columns>
+                                    <ui:Column name="number" title="#" width="20" />
+                                    <ui:Column name="player" title="Player" width="150" />
+                                    <ui:Column name="name" title="Name" width="150" />
+                                </ui:Columns>
+                            </ui:MultiColumnListView>
+<!--                            <ui:VisualElement name="nationsTable" class="table">-->
+<!--                                <ui:VisualElement name="numberColumn" class="column">-->
+<!--                                    <ui:Label tabindex="-1" text="1." display-tooltip-when-elided="true" />-->
+<!--                                </ui:VisualElement>-->
+<!--                                <ui:VisualElement name="nameColumn" class="column" style="flex-grow: 1;" />-->
+<!--                                <ui:VisualElement class="gridRow" style="flex-grow: 1;">-->
+<!--                                    <ui:EnumField type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" value="Center" />-->
+<!--                                    <ui:DropdownField label="Dropdown" index="-1" choices="System.Collections.Generic.List`1[System.String]" />-->
+<!--                                </ui:VisualElement>-->
+<!--                                <ui:VisualElement style="flex-grow: 1;" />-->
+<!--                            </ui:VisualElement>-->
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="buttonsPane" class="footer">
+            <ui:Button text="Back" display-tooltip-when-elided="true" name="backButton" />
+            <ui:Button text="Start game" display-tooltip-when-elided="true" name="startGameButton" class="main" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

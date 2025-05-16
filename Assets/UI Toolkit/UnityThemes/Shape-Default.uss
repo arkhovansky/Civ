@@ -1,0 +1,95 @@
+:root {
+    /*-unity-font-definition: url("/Packages/com.unity.ui/PackageResources/Fonts/Inter/Inter-Regular SDF.asset");*/
+    /*-unity-font-definition: url("/Packages/com.unity.modules.uielements/PackageResources/Fonts/Inter/Inter-Regular SDF.asset");*/
+    /*-unity-font-definition: url("/UIPackageResources/Fonts/Inter/Inter-Regular SDF.asset");*/
+    /*-unity-font-definition: resource("/Packages/com.unity.ui/PackageResources/Fonts/Inter/Inter-Regular SDF.asset");*/
+    /*-unity-font-definition: resource("Packages/com.unity.modules.uielements/PackageResources/Fonts/Inter/Inter-Regular SDF.asset");*/
+    /*-unity-font-definition: resource("Inter-Regular SDF.asset");*/
+
+    font-size: 12px;
+
+    --window-border-radius: 5px;
+    /* "overflow: hidden" does not work, equal radii can color-bleed, hence workaround with larger radius */
+    --window-border-radius-workaround: 7px;
+
+    --button-padding-vertical: 3px;
+    --button-padding-horizontal: 6px;
+    --button-border-width: 1px;
+    --button-border-radius: 3px;
+
+    --input-border-width: 1px;
+    --input-border-radius: 3px;
+}
+
+.unity-ui-document__root {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.unity-button {
+    padding-top: var(--button-padding-vertical);
+    padding-bottom: var(--button-padding-vertical);
+    padding-left: var(--button-padding-horizontal);
+    padding-right: var(--button-padding-horizontal);
+    border-top-width: var(--button-border-width);
+    border-bottom-width: var(--button-border-width);
+    border-left-width: var(--button-border-width);
+    border-right-width: var(--button-border-width);
+    border-top-left-radius: var(--button-border-radius);
+    border-top-right-radius: var(--button-border-radius);
+    border-bottom-right-radius: var(--button-border-radius);
+    border-bottom-left-radius: var(--button-border-radius);
+}
+
+.unity-button.main {
+    font-size: 16px;
+    padding: 4px 8px 4px 8px;
+    border-radius: 4px;
+}
+
+
+.unity-base-field__label {
+    min-width: auto;
+    margin-right: 5px;
+}
+
+.unity-base-text-field {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.unity-base-text-field__input {
+    padding-top: 3px;
+    padding-right: 5px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    border-width: var(--input-border-width);
+    border-radius: var(--input-border-radius);
+    /*flex-grow: 1;*/
+}
+
+.unity-base-field__input {
+    /*flex-grow: 0;*/
+}
+
+
+UnsignedIntegerField > .unity-base-field__input{
+    max-width: 150px;
+}
+
+
+
+.unity-multi-column-header {
+    min-height: auto;
+}
+
+.unity-scroll-view__content-container {
+    width: auto;  /* Default theme has somehow hardcoded 762 */
+}

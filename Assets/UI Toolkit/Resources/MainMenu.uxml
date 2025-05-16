@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Resources/Common.uss?fileID=7433441132597879392&amp;guid=27d4f1fe244b430db6cb562969bbb34b&amp;type=3#Common" />
+    <Style src="project://database/Assets/UI%20Toolkit/Resources/MainMenu.uss?fileID=7433441132597879392&amp;guid=88904ce05ddc48c1a0f06b71c9a7c3df&amp;type=3#MainMenu" />
+    <ui:VisualElement name="mainMenuPanel">
+        <ui:Button text="New Game" name="newGameButton" class="main-menu__button text-only-button" style="-unity-text-align: middle-left;" />
+        <ui:Button text="Load Game" name="loadGameButton" class="main-menu__button text-only-button" />
+        <ui:Button text="Exit" name="exitButton" class="main-menu__button text-only-button" />
+    </ui:VisualElement>
+</ui:UXML>

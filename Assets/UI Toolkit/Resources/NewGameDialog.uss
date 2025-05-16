@@ -1,0 +1,52 @@
+#dialog {
+    width: 1000px;
+    height: 700px;
+}
+
+#specification {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+#world {
+    flex-grow: 1;
+}
+
+#worldContent {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+.paneHeader {
+    -unity-text-align: upper-center;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.worldSubPane {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#terrainPane {
+    border-right-color: var(--color-divider);
+    border-right-width: 1px;
+    padding-right: 10px;
+}
+
+#terrainSize {
+    flex-direction: row;
+}
+
+#terrainSize .unity-base-text-field__input {
+    width: 40px;
+    min-width: 30px;
+}
+
+#height {
+    margin-left: 20px;
+}
+
+#nationsPane {
+    padding-left: 10px;
+}
